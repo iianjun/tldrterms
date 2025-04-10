@@ -1,12 +1,11 @@
 "use client";
-import React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { urlSchema } from "@/validations/url";
-import { z } from "zod";
 import { cn } from "@/lib/utils";
+import { urlSchema } from "@/validations/url";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 type FormData = z.infer<typeof urlSchema>;
 export default function LandingForm() {
@@ -17,9 +16,9 @@ export default function LandingForm() {
   } = useForm<FormData>({
     resolver: zodResolver(urlSchema),
   });
-  const onSubmit = (values: FormData) => {
+  const onSubmit = (_: FormData) => {
     // TODO: Handle form submission
-    console.log(values);
+    // console.log(values);
   };
   return (
     <form
@@ -36,7 +35,7 @@ export default function LandingForm() {
           type="text"
           {...register("url")}
         />
-        <span className="text-muted-foreground pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-sm peer-disabled:opacity-50">
+        <span className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground text-sm peer-disabled:opacity-50">
           https://
         </span>
       </div>
