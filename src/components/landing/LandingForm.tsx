@@ -23,7 +23,7 @@ export default function LandingForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row"
+      className="flex w-full max-w-80 flex-col gap-2 sm:w-auto sm:flex-row"
     >
       <div className="relative flex-1">
         <Input

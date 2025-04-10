@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "TLDR Terms",
+  title: "TL;DR Terms",
   description:
     "TLDRTerms is an AI-powered tool that instantly summarizes website Terms of Service into clear, human-readable sections. Built with Next.js and OpenAI, it helps users understand what they’re agreeing to—without reading pages of legal jargon.",
 };
