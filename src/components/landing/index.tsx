@@ -2,7 +2,7 @@ import LandingForm from "@/components/landing/LandingForm";
 
 export default function Landing() {
   return (
-    <div className="h-[calc(100svh-var(--header-h))] w-full flex-center flex-col @md:px-8 px-6 text-center">
+    <div className="w-full flex-1 flex-center flex-col @md:px-8 px-6 text-center">
       <h2 className="mb-4 font-bold text-3xl tracking-tight sm:text-4xl md:mb-6 md:text-5xl">
         Understand Website Terms {/*  */}
         <span className="mt-1 text-blue-500 sm:block">

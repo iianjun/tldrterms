@@ -134,7 +134,7 @@ Respond only with a compact JSON object like:
       },
       {
         role: "user",
-        content: text.slice(0, 2000), // don't overload it
+        content: text.slice(0, 2000),
       },
     ],
     temperature: 0,

@@ -1,7 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { getAnalyzeResult } from "@/services/terms";
 import { urlSchema } from "@/validations/url";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,7 +18,7 @@ export default function LandingForm() {
   } = useForm<FormData>({
     resolver: zodResolver(urlSchema),
     defaultValues: {
-      url: "https://www.recraft.ai/terms",
+      url: "",
     },
   });
   const onSubmit = async ({ url }: FormData) => {
@@ -33,15 +32,13 @@ export default function LandingForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex w-full max-w-80 flex-col gap-2 sm:w-auto sm:flex-row"
+      className="flex w-full max-w-80 flex-col gap-2 sm:w-auto sm:min-w-80 sm:flex-row"
     >
       <Input
-        className={cn("text-sm", {
-          "border-red-400": errors.url && touchedFields.url,
-        })}
+        className={"text-sm"}
+        type="url"
         error={Boolean(errors.url && touchedFields.url)}
         placeholder="https://google.com"
-        type="text"
         {...register("url")}
       />
       <Button type="submit" disabled={loading}>
