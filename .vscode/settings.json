@@ -8,9 +8,6 @@
   "[javascriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "[html]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },

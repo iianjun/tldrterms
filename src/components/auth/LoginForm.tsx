@@ -30,9 +30,9 @@ export default function LoginForm() {
     <form
       className="flex flex-col gap-4"
       onSubmit={handleSubmit(async (credentials) => {
+        const supabase = createClient();
         try {
           setLoading(true);
-          const supabase = createClient();
           const { error } = await supabase.auth.signInWithPassword(credentials);
           if (error) {
             return toast.error(error.message);
