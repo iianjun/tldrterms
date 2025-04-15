@@ -8,7 +8,9 @@ export default function RootLayout({
   return (
     <>
       <Header />
-      <main className="@container flex h-svh pt-header-h">{children}</main>
+      <main className="@container relative flex h-svh pt-header-h">
+        {children}
+      </main>
     </>
   );
 }

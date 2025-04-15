@@ -37,12 +37,12 @@ export default function AuthLayout({
   return (
     <div className="mx-auto flex w-82.5 flex-col justify-center sm:w-96">
       <div className="mb-10">
-        <h2 className="mb-2 text-2xl lg:text-3xl">
+        <h1 className="mb-2 text-2xl lg:text-3xl">
           {SOURCE_MAP[pathname].title}
-        </h2>
-        <h3 className="text-muted-foreground text-sm">
+        </h1>
+        <h2 className="text-muted-foreground text-sm">
           {SOURCE_MAP[pathname].subtitle}
-        </h3>
+        </h2>
       </div>
       <div className="flex flex-col gap-5">
         <OAuthButton provider="google" />
