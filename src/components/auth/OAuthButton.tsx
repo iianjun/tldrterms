@@ -25,6 +25,9 @@ export default function OAuthButton({ provider }: Readonly<OAuthButtonProps>) {
         const supabase = createClient();
         supabase.auth.signInWithOAuth({
           provider,
+          options: {
+            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+          },
         });
       }}
     >
