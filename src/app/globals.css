@@ -43,6 +43,7 @@
 
   /* Custom variables */
   --spacing-header-h: var(--header-h);
+  --spacing-app-header-h: var(--app-header-h);
   /* --spacing-15: 3.75rem; */
 }
 
@@ -80,6 +81,7 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
   --header-h: 3.375rem;
+  --app-header-h: 3.5rem;
 }
 
 .dark {
@@ -131,19 +133,15 @@
     align-items: center;
     justify-content: center;
   }
-  .visually-hidden {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    border: 0;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
 }
 
 @media (min-width: 48rem) {
   :root {
     --header-h: 4.25rem;
   }
+}
+
+[role="button"],
+button {
+  cursor: pointer;
 }

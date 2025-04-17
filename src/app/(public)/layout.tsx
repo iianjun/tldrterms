@@ -1,13 +1,13 @@
-import Header from "@/components/layout/Header";
+import PublicHeader from "@/components/layout/header/PublicHeader";
 
-export default function RootLayout({
+export default function PublicLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <>
-      <Header />
+      <PublicHeader />
       <main className="@container relative flex h-svh pt-header-h">
         {children}
       </main>

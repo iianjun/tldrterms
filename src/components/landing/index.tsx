@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function Landing() {
   return (
     <>
-      <h1 className="visually-hidden">TLDRTerms</h1>
+      <h1 className="sr-only">TLDRTerms</h1>
       <motion.div
         className="w-full flex-1 flex-center flex-col @md:px-8 px-6 text-center"
         initial={{ opacity: 0 }}

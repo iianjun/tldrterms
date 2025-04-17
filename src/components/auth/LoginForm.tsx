@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { loginSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -13,6 +14,7 @@ import { z } from "zod";
 
 type FormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const {
     register,
@@ -37,6 +39,7 @@ export default function LoginForm() {
           if (error) {
             return toast.error(error.message);
           }
+          router.push("/analytics");
         } catch {
           return toast.error("Something went wrong. Please try again later.");
         } finally {
