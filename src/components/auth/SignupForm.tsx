@@ -56,7 +56,12 @@ export default function SignupForm() {
     const supabase = createClient();
     try {
       setLoading(true);
-      const { error } = await supabase.auth.signUp(credentials);
+      const { error } = await supabase.auth.signUp({
+        ...credentials,
+        options: {
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+        },
+      });
       if (error) {
         return toast.error(error.message);
       }
