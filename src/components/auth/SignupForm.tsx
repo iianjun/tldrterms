@@ -9,11 +9,11 @@ import { signupSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import {
-  Circle,
   CircleCheckIcon,
+  CircleIcon,
   EyeIcon,
   EyeOffIcon,
-  Loader2,
+  Loader2Icon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -138,7 +138,7 @@ export default function SignupForm() {
               {value ? (
                 <CircleCheckIcon width={16} height={16} />
               ) : (
-                <Circle width={16} height={16} />
+                <CircleIcon width={16} height={16} />
               )}
               <p className="text-sm">
                 {PASSWORD_TEXT[key as keyof typeof PASSWORD_TEXT]}
@@ -148,7 +148,7 @@ export default function SignupForm() {
         </motion.ul>
       </div>
       <Button disabled={loading}>
-        {loading && <Loader2 className="animate-spin" />}Sign up
+        {loading && <Loader2Icon className="animate-spin" />}Sign up
       </Button>
     </form>
   );

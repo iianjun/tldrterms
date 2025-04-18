@@ -1,7 +1,5 @@
+import AnalyzeForm from "@/components/analytics/AnalyzeForm";
+
 export default function Page() {
-  return (
-    <div className="flex flex-col">
-      <div className="h-screen"></div>
-    </div>
-  );
+  return <AnalyzeForm />;
 }

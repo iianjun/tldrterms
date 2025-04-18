@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { getAnalyzeResult } from "@/services/terms";
 import { urlSchema } from "@/validations/url";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -42,7 +42,7 @@ export default function LandingForm() {
         {...register("url")}
       />
       <Button type="submit" disabled={loading}>
-        {loading ? <Loader2 className="animate-spin" /> : "Analyze"}
+        {loading ? <Loader2Icon className="animate-spin" /> : "Analyze"}
       </Button>
     </form>
   );

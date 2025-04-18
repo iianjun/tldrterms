@@ -11,8 +11,8 @@ export default function AppSidebar() {
     <Sidebar>
       <SidebarHeader />
       <SidebarContent>
-        <SidebarGroup />
-        <SidebarGroup />
+        <SidebarGroup></SidebarGroup>
+        <SidebarGroup></SidebarGroup>
       </SidebarContent>
       <SidebarFooter />
     </Sidebar>

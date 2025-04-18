@@ -3,7 +3,7 @@ import LogoGradientTracing from "@/components/landing/LogoGradientTracing";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRightIcon } from "lucide-react";
 import Link from "next/link";
 export default function Landing() {
   return (
@@ -34,21 +34,12 @@ export default function Landing() {
             "group"
           )}
         >
-          <Link href="/login">
-            <div
-              className={cn(
-                "absolute inset-0",
-                "bg-gradient-to-r from-blue-500 via-purple-600 to-pink-500",
-                "opacity-40 group-hover:opacity-60",
-                "blur transition-opacity duration-500"
-              )}
-            />
-            {/* Content */}
-            <div className="relative flex items-center justify-center gap-2">
+          <Button asChild>
+            <Link href="/login">
               <span className="text-white dark:text-zinc-900">Get Started</span>
-              <ArrowUpRight className="h-3.5 w-3.5 text-white/90 dark:text-zinc-900/90" />
-            </div>
-          </Link>
+              <ArrowUpRightIcon className="h-3.5 w-3.5 text-white/90 dark:text-zinc-900/90" />
+            </Link>
+          </Button>
         </Button>
       </motion.div>
       <LogoGradientTracing />

@@ -6,7 +6,7 @@ import { AlignLeftIcon, PanelLeftIcon, SquarePenIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function ProtectedHeader() {
-  const { state, isMobile, openMobile, setOpenMobile, setOpen } = useSidebar();
+  const { state, toggleSidebar, isMobile } = useSidebar();
   return (
     <header
       className={
@@ -14,18 +14,14 @@ export default function ProtectedHeader() {
       }
     >
       {isMobile && (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setOpenMobile(!openMobile)}
-        >
+        <Button variant="ghost" size="icon" onClick={toggleSidebar}>
           <AlignLeftIcon className="size-6" />
         </Button>
       )}
       <div className={"flex items-center"}>
         {state === "collapsed" && !isMobile && (
           <>
-            <Button variant="ghost" size="icon" onClick={() => setOpen(true)}>
+            <Button variant="ghost" size="icon" onClick={toggleSidebar}>
               <PanelLeftIcon className="size-6" />
             </Button>
             <Button asChild variant="ghost" size="icon">

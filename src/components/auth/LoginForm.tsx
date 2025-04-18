@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 import { loginSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
+import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -72,7 +72,7 @@ export default function LoginForm() {
         )}
       </div>
       <Button disabled={loading}>
-        {loading && <Loader2 className="animate-spin" />}Sign In
+        {loading && <Loader2Icon className="animate-spin" />}Sign In
       </Button>
     </form>
   );
