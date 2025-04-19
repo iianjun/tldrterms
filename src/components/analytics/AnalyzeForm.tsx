@@ -2,15 +2,21 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TextShimmer } from "@/components/ui/text-shimmer";
+import { createRoom } from "@/services/terms";
 import { urlSchema } from "@/validations/url";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowUpIcon } from "lucide-react";
+import { ArrowUpIcon, Loader2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 type FormData = z.infer<typeof urlSchema>;
 export default function AnalyzeForm() {
-  // const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -18,15 +24,17 @@ export default function AnalyzeForm() {
   } = useForm<FormData>({
     resolver: zodResolver(urlSchema),
     defaultValues: {
-      url: "",
+      url: "https://boltai.com/terms",
     },
   });
-  const onSubmit = async ({}: FormData) => {
+  const onSubmit = async ({ url }: FormData) => {
     try {
-      // setLoading(true);
-      // await getAnalyzeResult({ url });
-    } finally {
-      // setLoading(false);
+      setLoading(true);
+      const { data } = await createRoom({ url });
+      if (!data) return;
+      router.push(`/analytics/${data}`);
+    } catch {
+      setLoading(false);
     }
   };
   return (
@@ -50,8 +58,13 @@ export default function AnalyzeForm() {
           <Button
             className="-translate-y-1/2 absolute top-1/2 right-2 size-9 rounded-full"
             type="submit"
+            disabled={loading}
           >
-            <ArrowUpIcon className="size-5" />
+            {loading ? (
+              <Loader2Icon className="animate-spin" />
+            ) : (
+              <ArrowUpIcon className="size-5" />
+            )}
           </Button>
         </form>
       </div>

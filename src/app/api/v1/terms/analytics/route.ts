@@ -1,91 +1,11 @@
 import { CustomResponse } from "@/lib/response";
 import { OpenAIValidationResponse } from "@/types/openai";
-import * as cheerio from "cheerio";
+import {
+  getWebsiteTextUndici,
+  getWebsiteTextWithPuppeteer,
+} from "@/utils/get-website";
 import { NextRequest } from "next/server";
 import OpenAI from "openai";
-import puppeteer from "puppeteer";
-import { request } from "undici";
-
-type Response = {
-  isSuccess: boolean;
-  result?: string;
-};
-
-function convertHtmlToText(html: string) {
-  const $ = cheerio.load(html);
-  $("script, style, nav, footer, header, noscript").remove();
-  const text = $("body").text().replace(/\s+/g, " ").trim();
-  return text;
-}
-async function getWebsiteTextWithPuppeteer(url: string): Promise<Response> {
-  try {
-    const browser = await puppeteer.launch({
-      headless: true, // correct for Puppeteer 24.6.1
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-    try {
-      const page = await browser.newPage();
-      await page.goto(url, {
-        waitUntil: "networkidle0",
-        timeout: 30000,
-      });
-
-      const html = await page.evaluate(() => document.body.innerHTML);
-      const text = convertHtmlToText(html);
-
-      return {
-        isSuccess: true,
-        result: text,
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        isSuccess: false,
-      };
-    } finally {
-      await browser.close();
-    }
-  } catch (e) {
-    console.error("Puppeteer error:", e);
-    return {
-      isSuccess: false,
-    };
-  }
-}
-
-async function getWebsiteTextUndici(url: string): Promise<Response> {
-  try {
-    const { body, statusCode } = await request(url, {
-      method: "GET",
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        Connection: "keep-alive",
-      },
-    });
-
-    if (statusCode !== 200) {
-      return {
-        isSuccess: false,
-      };
-    }
-
-    const html = await body.text();
-    const text = convertHtmlToText(html);
-    return {
-      isSuccess: true,
-      result: text,
-    };
-  } catch (e) {
-    console.error("Undici error:", e);
-    return {
-      isSuccess: false,
-    };
-  }
-}
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 

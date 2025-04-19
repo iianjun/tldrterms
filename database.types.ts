@@ -39,32 +39,61 @@ export type Database = {
           },
         ];
       };
-      analytics: {
+      analytic_rooms: {
         Row: {
           created_at: string;
           id: number;
-          score: number;
-          triggered_geopolitical_risk: boolean;
           url: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
           id?: number;
-          score: number;
-          triggered_geopolitical_risk?: boolean;
           url: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
           id?: number;
-          score?: number;
-          triggered_geopolitical_risk?: boolean;
           url?: string;
           user_id?: string;
         };
         Relationships: [];
+      };
+      analytics: {
+        Row: {
+          created_at: string;
+          id: number;
+          room_id: number;
+          score: number;
+          triggered_geopolitical_risk: boolean;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          room_id: number;
+          score: number;
+          triggered_geopolitical_risk?: boolean;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          room_id?: number;
+          score?: number;
+          triggered_geopolitical_risk?: boolean;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "analytics_room_id_fkey";
+            columns: ["room_id"];
+            isOneToOne: false;
+            referencedRelation: "analytic_rooms";
+            referencedColumns: ["id"];
+          },
+        ];
       };
     };
     Views: {
