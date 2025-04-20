@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TextShimmer } from "@/components/ui/text-shimmer";
-import { createRoom } from "@/services/terms";
+import { createRoom } from "@/services/analytics";
 import { urlSchema } from "@/validations/url";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowUpIcon, Loader2Icon } from "lucide-react";

@@ -5,7 +5,7 @@ import { OpenAIAnalayzedResponse } from "@/types/openai";
 export function getAnalyzeResult(data: { url: string }): Promise<
   ApiResponse<OpenAIAnalayzedResponse>
 > {
-  return apiClient("/terms/analytics", {
+  return apiClient("/analytics", {
     method: "POST",
     body: data,
   });
@@ -14,7 +14,7 @@ export function getAnalyzeResult(data: { url: string }): Promise<
 export function getAnalyticsByRoomId(data: { roomId: string }): Promise<
   ApiResponse<OpenAIAnalayzedResponse>
 > {
-  return apiClient(`/terms/analytics/${data.roomId}`, {
+  return apiClient(`/analytics/rooms/${data.roomId}`, {
     method: "GET",
   });
 }
@@ -22,7 +22,7 @@ export function getAnalyticsByRoomId(data: { roomId: string }): Promise<
 export function createRoom(data: { url: string }): Promise<
   ApiResponse<number>
 > {
-  return apiClient("/terms/rooms", {
+  return apiClient("/analytics/rooms", {
     method: "POST",
     body: data,
   });

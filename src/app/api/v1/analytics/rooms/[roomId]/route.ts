@@ -18,6 +18,7 @@ export async function GET(
       status: 401,
     });
   }
+
   return CustomResponse.success({
     data: {
       roomId,

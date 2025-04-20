@@ -1,4 +1,4 @@
-import { getAnalyticsByRoomId } from "@/services/terms";
+import { getAnalyticsByRoomId } from "@/services/analytics";
 
 export default async function Page({
   params,
