@@ -3,7 +3,7 @@ import { ApiResponse } from "@/types/api";
 import { OpenAIAnalayzedResponse } from "@/types/openai";
 
 export function getAnalyzeResult(data: { url: string }): Promise<
-  ApiResponse<OpenAIAnalayzedResponse>
+  ApiResponse<ApiResponse<OpenAIAnalayzedResponse>>
 > {
   return apiClient("/analytics", {
     method: "POST",
@@ -12,7 +12,7 @@ export function getAnalyzeResult(data: { url: string }): Promise<
 }
 
 export function getAnalyticsByRoomId(data: { roomId: string }): Promise<
-  ApiResponse<OpenAIAnalayzedResponse>
+  ApiResponse<ApiResponse<OpenAIAnalayzedResponse>>
 > {
   return apiClient(`/analytics/rooms/${data.roomId}`, {
     method: "GET",

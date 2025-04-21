@@ -18,10 +18,13 @@ export async function GET(
       status: 401,
     });
   }
-
+  const { data } = await supabase
+    .from("analytics")
+    .select("*")
+    .eq("room_id", Number(roomId))
+    .eq("user_id", user.id)
+    .single();
   return CustomResponse.success({
-    data: {
-      roomId,
-    },
+    data,
   });
 }
