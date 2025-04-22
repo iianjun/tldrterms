@@ -1,20 +1,19 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse } from "@/types/api";
-import { OpenAIAnalayzedResponse } from "@/types/openai";
+import { Analytic, OpenAIAnalayzedResponse } from "@/types/openai";
 
-export function getAnalyzeResult(data: { url: string }): Promise<
-  ApiResponse<ApiResponse<OpenAIAnalayzedResponse>>
+export function streamAnalytics(data: { roomId: string }): Promise<
+  ApiResponse<OpenAIAnalayzedResponse>
 > {
-  return apiClient("/analytics", {
-    method: "POST",
-    body: data,
+  return apiClient(`/analytics/${data.roomId}/stream`, {
+    method: "GET",
   });
 }
 
 export function getAnalyticsByRoomId(data: { roomId: string }): Promise<
-  ApiResponse<ApiResponse<OpenAIAnalayzedResponse>>
+  ApiResponse<Analytic>
 > {
-  return apiClient(`/analytics/rooms/${data.roomId}`, {
+  return apiClient(`/analytics/${data.roomId}`, {
     method: "GET",
   });
 }
@@ -22,7 +21,7 @@ export function getAnalyticsByRoomId(data: { roomId: string }): Promise<
 export function createRoom(data: { url: string }): Promise<
   ApiResponse<number>
 > {
-  return apiClient("/analytics/rooms", {
+  return apiClient("/rooms", {
     method: "POST",
     body: data,
   });

@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "check": "biome check --write ./src"
+    "check": "biome check --write ./src",
+    "generate-types": "pnpm dlx supabase gen types typescript --project-id ormhjvtyrakenkccqrni --schema public > ./src/types/database.types.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",

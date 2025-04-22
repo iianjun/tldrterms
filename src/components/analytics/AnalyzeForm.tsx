@@ -42,7 +42,7 @@ export default function AnalyzeForm() {
       <div className="flex @md:h-auto h-full w-full flex-col items-center gap-6">
         <h1 className="flex w-full flex-1 flex-col items-center justify-center text-center @md:text-3xl text-2xl text-primary tracking-tight">
           Got a terms page?
-          <TextShimmer as="span">I’ll make sense of it.</TextShimmer>
+          <TextShimmer as="span">We’ll make sense of it.</TextShimmer>
         </h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
