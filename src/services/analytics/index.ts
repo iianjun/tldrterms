@@ -1,9 +1,9 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse } from "@/types/api";
-import { Analytic } from "@/types/openai";
+import { AnalyticRoom } from "@/types/openai";
 
-export function getAnalyticsByRoomId(data: { roomId: string }): Promise<
-  ApiResponse<Analytic>
+export function getAnalyticsRoomById(data: { roomId: string }): Promise<
+  ApiResponse<AnalyticRoom>
 > {
   return apiClient(`/analytics/${data.roomId}`, {
     method: "GET",

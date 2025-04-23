@@ -17,29 +17,40 @@ export async function GET(
         status: 401,
       });
     }
-    const { data: roomData } = await supabase
+    const { data: roomData, error: roomError } = await supabase
       .from("analytic_rooms")
       .select(`
         id,
         url,
+        analytic_status,
         analytics (
           id,
           score,
           triggered_geopolitical_risk,
-          created_at
+          created_at,
+          analytic_points (
+            id,
+            analytic_id,
+            category,
+            case_id,
+            rating,
+            importance,
+            description
+          )
         )
         `)
       .eq("id", Number(roomId))
       .eq("user_id", userId)
       .single();
-    if (!roomData) {
+    if (!roomData || roomError) {
+      console.error(roomError);
       return CustomResponse.error({
         message: "Room not found",
         status: 404,
       });
     }
     return CustomResponse.success({
-      data: roomData.analytics,
+      data: roomData,
     });
   } catch (e) {
     console.error(e);

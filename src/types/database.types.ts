@@ -49,18 +49,21 @@ export type Database = {
       };
       analytic_rooms: {
         Row: {
+          analytic_status: Database["public"]["Enums"]["analytic_status_type"];
           created_at: string;
           id: number;
           url: string;
           user_id: string;
         };
         Insert: {
+          analytic_status?: Database["public"]["Enums"]["analytic_status_type"];
           created_at?: string;
           id?: number;
           url: string;
           user_id: string;
         };
         Update: {
+          analytic_status?: Database["public"]["Enums"]["analytic_status_type"];
           created_at?: string;
           id?: number;
           url?: string;
@@ -119,6 +122,7 @@ export type Database = {
         | "geopolitical_risk";
       analytic_point_importance: "minor" | "major" | "critical";
       analytic_point_rating: "good" | "bad" | "neutral";
+      analytic_status_type: "idle" | "error" | "completed";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -243,6 +247,7 @@ export const Constants = {
       ],
       analytic_point_importance: ["minor", "major", "critical"],
       analytic_point_rating: ["good", "bad", "neutral"],
+      analytic_status_type: ["idle", "error", "completed"],
     },
   },
 } as const;

@@ -2,6 +2,8 @@ import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
 import {
+  AnalyticPointImportance,
+  AnalyticPointRating,
   OpenAIAnalayzedResponse,
   OpenAIValidationResponse,
 } from "@/types/openai";
@@ -14,6 +16,26 @@ import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+const SCORE_MATRIX: Record<
+  AnalyticPointRating,
+  Record<AnalyticPointImportance, number>
+> = {
+  good: {
+    minor: 1,
+    major: 2,
+    critical: 3,
+  },
+  bad: {
+    minor: -1,
+    major: -2,
+    critical: -3,
+  },
+  neutral: {
+    minor: 0,
+    major: 0,
+    critical: 0,
+  },
+};
 //Extract text from the website
 async function performFetching(url: string) {
   try {
@@ -57,10 +79,10 @@ async function performFetching(url: string) {
       ],
       temperature: 0,
     });
-    const validationRaw = (validation.choices[0].message.content ??
-      "{}") as unknown as OpenAIValidationResponse;
+    const validationRaw = JSON.parse(
+      validation.choices[0].message.content ?? "{}"
+    ) as unknown as OpenAIValidationResponse;
     const { language, isTermsOrPrivacy } = validationRaw;
-
     if (!["EN", "KO"].includes(language ?? "")) {
       return {
         isSuccess: false,
@@ -81,6 +103,7 @@ async function performFetching(url: string) {
   }
 }
 
+//Analyze the text using OpenAI
 async function performAnalyzing(text: string) {
   try {
     const chatResponse = await openai.chat.completions.create({
@@ -95,7 +118,6 @@ You are an AI legal evaluator for TLDRTerms. Your job is to analyze Terms of Ser
 
 ### 📦 Return a JSON object with the following structure:
 
-- score: total score (sum of all points unless overridden by geopolitical risk)
 - triggered_geopolitical_risk: true or false
 - points: an array of objects, each representing one evaluated case, structured as:
   - category: one of "privacy", "transparency", "rights", "security", "geopolitical_risk"
@@ -122,17 +144,6 @@ You are an AI legal evaluator for TLDRTerms. Your job is to analyze Terms of Ser
    - "major" → Significant impact on users
    - "critical" → Major legal, privacy, or rights concern
 
-4. **Scoring Rules:**
-   Combine "rating" and "importance" to calculate the score for each point:
-
-   | Rating   | Minor | Major | Critical |
-   |----------|-------|-------|----------|
-   | Good     | +1    | +2    | +3       |
-   | Bad      | -1    | -2    | -3       |
-   | Neutral  | 0     | 0     | 0        |
-
-   > The final "score" field in the JSON response is the sum of all individual point scores.
-
 ---
 
 ### 🚨 Geopolitical Risk Override
@@ -150,10 +161,9 @@ Then:
   - importance: "critical"
   - description: "Service stores or shares data with Chinese entities"
 - Set:
-  - score = -999
   - triggered_geopolitical_risk = true
 
-If this is **not detected**, set "triggered_geopolitical_risk = false" and calculate score normally.
+If this is **not detected**, set "triggered_geopolitical_risk = false".
 
 ---
 
@@ -190,10 +200,9 @@ If this is **not detected**, set "triggered_geopolitical_risk = false" and calcu
 ### 📝 Final Rules
 
 - "description" is required for each point and must explain **why** the rating was assigned
-- Do **not** include a "grade" — the client will calculate that from score
 - Do **not** invent new cases — only use those listed
 - Do **not** return anything except valid JSON
-
+- "description" must be in the same language as the original document (e.g., return descriptions in Korean if the text is in Korean, otherwise in English)
 `,
         },
         {
@@ -201,14 +210,18 @@ If this is **not detected**, set "triggered_geopolitical_risk = false" and calcu
           content: text,
         },
       ],
+      response_format: { type: "json_object" },
       temperature: 0.3,
     });
     const content = chatResponse.choices[0].message.content;
-    const data = JSON.parse(content || "{}");
+    const data = JSON.parse(content || "{}") as OpenAIAnalayzedResponse;
+    const score = calculateScore(data);
+    data["score"] = score;
+
     return {
       isSuccess: true,
       message: "success",
-      result: data as OpenAIAnalayzedResponse,
+      result: data,
     };
   } catch (e) {
     console.error(e);
@@ -219,6 +232,15 @@ If this is **not detected**, set "triggered_geopolitical_risk = false" and calcu
   }
 }
 
+function calculateScore({
+  points,
+  triggered_geopolitical_risk,
+}: OpenAIAnalayzedResponse) {
+  if (triggered_geopolitical_risk) return -999;
+  return points.reduce((acc, point) => {
+    return acc + SCORE_MATRIX[point.rating][point.importance];
+  }, 0);
+}
 export async function GET(
   _: NextRequest,
   { params }: { params: Promise<{ roomId: string }> }
@@ -279,7 +301,7 @@ export async function GET(
         const { score, triggered_geopolitical_risk, points } =
           analysisResult.result;
 
-        const { data, error: createError } = await supabase
+        const { data, error: analyticError } = await supabase
           .from("analytics")
           .insert({
             score,
@@ -290,19 +312,33 @@ export async function GET(
           .select("id")
           .single();
 
-        if (!data || createError) {
+        if (!data || analyticError) {
+          console.error(`analyticError: `, analyticError);
           throw new Error("Error analyzing the content.");
         }
-        await supabase.from("analytic_points").insert(
-          points.map((point) => ({
-            analytic_id: data.id,
-            category: point.category,
-            rating: point.rating,
-            importance: point.importance,
-            case_id: point.case_id,
-            description: point.description,
-          }))
-        );
+        const { error: analyticPointError } = await supabase
+          .from("analytic_points")
+          .insert(
+            points.map((point) => ({
+              analytic_id: data.id,
+              category: point.category,
+              rating: point.rating,
+              importance: point.importance,
+              case_id: point.case_id,
+              description: point.description,
+            }))
+          );
+        if (analyticPointError) {
+          console.error(`analyticPointError`, analyticPointError);
+          throw new Error("Error analyzing the content.");
+        }
+        await supabase
+          .from("analytic_rooms")
+          .update({
+            analytic_status: "completed",
+          })
+          .eq("id", Number(roomId));
+
         send({
           success: true,
           data: { status: "done", ...analysisResult.result },
@@ -310,6 +346,12 @@ export async function GET(
       } catch (e) {
         console.error(e);
         const message = e instanceof Error ? e.message : "Unknown";
+        await supabase
+          .from("analytic_rooms")
+          .update({
+            analytic_status: "error",
+          })
+          .eq("id", Number(roomId));
         send({ success: false, error: message, data: { status: "error" } });
         controller.enqueue(encoder.encode);
       } finally {

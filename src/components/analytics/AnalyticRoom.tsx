@@ -1,25 +1,28 @@
 "use client";
 import InitialAnimation from "@/components/analytics/InitialAnimation";
 import { ApiResponse } from "@/types/api";
-import { AIStatus, Analytic, OpenAIAnalayzedResponse } from "@/types/openai";
+import {
+  AIStatus,
+  AnalyticRoom as AnalyticRoomType,
+  OpenAIAnalayzedResponse,
+} from "@/types/openai";
 import { useEffect, useState } from "react";
 
 interface Props {
-  initialAnalytic?: Analytic | null;
-  roomId: string;
+  room: AnalyticRoomType;
 }
 
-export default function AnalyticRoom({
-  initialAnalytic,
-  roomId,
-}: Readonly<Props>) {
-  const [status, setStatus] = useState<AIStatus>(
-    initialAnalytic ? "done" : "fetching"
-  );
+export default function AnalyticRoom({ room }: Readonly<Props>) {
+  const [status, setStatus] = useState<AIStatus>(() => {
+    if (room.analytic_status === "error") return "error";
+    if (room.analytic_status === "completed") return "done";
+    return "fetching";
+  });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    const es = new EventSource(`/api/v1/analytics/${roomId}/stream`);
+    if (room.analytic_status !== "idle") return;
+    const es = new EventSource(`/api/v1/analytics/${room.id}/stream`);
     es.onmessage = (e) => {
       const { success, statusCode, error, data } = JSON.parse(
         e.data
@@ -36,9 +39,9 @@ export default function AnalyticRoom({
     };
     es.onerror = () => es.close();
     return () => es.close();
-  }, [roomId]);
+  }, [room]);
 
-  if (!initialAnalytic && status !== "done") {
+  if (status !== "done") {
     return <InitialAnimation status={status} errorMsg={errorMsg} />;
   }
   //   TODO: show analytic result ui
