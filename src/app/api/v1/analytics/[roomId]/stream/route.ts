@@ -202,6 +202,7 @@ If this is **not detected**, set "triggered_geopolitical_risk = false".
 - "description" is required for each point and must explain **why** the rating was assigned
 - Do **not** invent new cases — only use those listed
 - Do **not** return anything except valid JSON
+- Always return a point entry for every case in the matrix (cases 1 through 16), using "neutral" if no match.
 - "description" must be in the same language as the original document (e.g., return descriptions in Korean if the text is in Korean, otherwise in English)
 `,
         },
@@ -289,10 +290,13 @@ export async function GET(
         );
       };
       try {
+        console.info(`Start fetching for ${url}...`);
         send({ success: true, data: { status: "fetching" } });
         const fetchingResult = await performFetching(url);
         if (!fetchingResult.isSuccess || !fetchingResult.result)
           throw new Error(fetchingResult.message);
+
+        console.info(`Start analyzing for ${url}...`);
         send({ success: true, data: { status: "analyzing" } });
         const analysisResult = await performAnalyzing(fetchingResult.result);
         if (!analysisResult.isSuccess || !analysisResult.result) {
@@ -300,7 +304,9 @@ export async function GET(
         }
         const { score, triggered_geopolitical_risk, points } =
           analysisResult.result;
+        console.dir(analysisResult.result, { depth: 10 });
 
+        console.info(`Start saving for ${url}...`);
         const { data, error: analyticError } = await supabase
           .from("analytics")
           .insert({

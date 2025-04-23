@@ -1,5 +1,6 @@
 "use client";
 import InitialAnimation from "@/components/analytics/InitialAnimation";
+import { useSSE } from "@/hooks/useSSE";
 import { ApiResponse } from "@/types/api";
 import {
   AIStatus,
@@ -19,27 +20,26 @@ export default function AnalyticRoom({ room }: Readonly<Props>) {
     return "fetching";
   });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const { data, close } = useSSE<
+    ApiResponse<{ status: AIStatus } & OpenAIAnalayzedResponse>
+  >({
+    url: `/api/v1/analytics/${room.id}/stream`,
+    enabled: room.analytic_status === "idle",
+  });
 
   useEffect(() => {
-    if (room.analytic_status !== "idle") return;
-    const es = new EventSource(`/api/v1/analytics/${room.id}/stream`);
-    es.onmessage = (e) => {
-      const { success, statusCode, error, data } = JSON.parse(
-        e.data
-      ) as ApiResponse<{ status: AIStatus } & OpenAIAnalayzedResponse>;
-      if (!data?.status) return;
-      if (data?.status === "error" || !success || statusCode !== 200 || error) {
-        setStatus("error");
-        setErrorMsg(error || "An error occurred");
-        es.close();
-      } else {
-        setStatus(data.status);
-        setErrorMsg(null);
-      }
-    };
-    es.onerror = () => es.close();
-    return () => es.close();
-  }, [room]);
+    if (!data) return;
+    const { success, statusCode, error, data: result } = data;
+    if (!result?.status) return;
+    if (result.status === "error" || !success || statusCode !== 200 || error) {
+      setStatus("error");
+      setErrorMsg(error || "An error occurred");
+      close();
+    } else {
+      setStatus(result.status);
+      setErrorMsg(null);
+    }
+  }, [data, close]);
 
   if (status !== "done") {
     return <InitialAnimation status={status} errorMsg={errorMsg} />;
