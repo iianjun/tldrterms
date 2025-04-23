@@ -32,7 +32,6 @@ export const updateSession = async (request: NextRequest) => {
       }
     );
     const user = await supabase.auth.getUser();
-    // console.log(user.data.user?.id);
     // protected routes
     if (request.nextUrl.pathname.startsWith("/analytics") && user.error) {
       return NextResponse.redirect(new URL("/login", request.url));

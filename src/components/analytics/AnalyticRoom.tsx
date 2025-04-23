@@ -1,6 +1,7 @@
 "use client";
 import InitialAnimation from "@/components/analytics/InitialAnimation";
-import { Analytic } from "@/types/openai";
+import { ApiResponse } from "@/types/api";
+import { AIStatus, Analytic, OpenAIAnalayzedResponse } from "@/types/openai";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -8,32 +9,37 @@ interface Props {
   roomId: string;
 }
 
-type Status = "fetching" | "analyzing" | "done";
 export default function AnalyticRoom({
   initialAnalytic,
   roomId,
 }: Readonly<Props>) {
-  const [status, setStatus] = useState<Status>(
+  const [status, setStatus] = useState<AIStatus>(
     initialAnalytic ? "done" : "fetching"
   );
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
-    const eventSource = new EventSource(`/api/v1/analytics/${roomId}/stream`);
-    eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.status) setStatus(data.status);
-      if (data.done) eventSource.close();
+    const es = new EventSource(`/api/v1/analytics/${roomId}/stream`);
+    es.onmessage = (e) => {
+      const { success, statusCode, error, data } = JSON.parse(
+        e.data
+      ) as ApiResponse<{ status: AIStatus } & OpenAIAnalayzedResponse>;
+      if (!data?.status) return;
+      if (data?.status === "error" || !success || statusCode !== 200 || error) {
+        setStatus("error");
+        setErrorMsg(error || "An error occurred");
+        es.close();
+      } else {
+        setStatus(data.status);
+        setErrorMsg(null);
+      }
     };
-
-    eventSource.onerror = () => {
-      eventSource.close();
-    };
-
-    return () => eventSource.close();
+    es.onerror = () => es.close();
+    return () => es.close();
   }, [roomId]);
 
-  if (!initialAnalytic && ["fetching", "analyzing"].includes(status)) {
-    return <InitialAnimation status={status as "fetching" | "analyzing"} />;
+  if (!initialAnalytic && status !== "done") {
+    return <InitialAnimation status={status} errorMsg={errorMsg} />;
   }
   //   TODO: show analytic result ui
   return <></>;

@@ -1,14 +1,6 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse } from "@/types/api";
-import { Analytic, OpenAIAnalayzedResponse } from "@/types/openai";
-
-export function streamAnalytics(data: { roomId: string }): Promise<
-  ApiResponse<OpenAIAnalayzedResponse>
-> {
-  return apiClient(`/analytics/${data.roomId}/stream`, {
-    method: "GET",
-  });
-}
+import { Analytic } from "@/types/openai";
 
 export function getAnalyticsByRoomId(data: { roomId: string }): Promise<
   ApiResponse<Analytic>

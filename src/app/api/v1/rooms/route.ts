@@ -1,4 +1,5 @@
 import { CustomResponse } from "@/lib/response";
+import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
 
 import { NextRequest } from "next/server";
@@ -12,11 +13,8 @@ export async function POST(req: NextRequest) {
     });
   }
   const supabase = await createClient();
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser();
-  if (userError || !user) {
+  const { userId, isInvalid } = await getAuthentication();
+  if (isInvalid) {
     return CustomResponse.error({
       message: "Unauthorized",
       status: 401,
@@ -24,7 +22,7 @@ export async function POST(req: NextRequest) {
   }
   const { data, error: createError } = await supabase
     .from("analytic_rooms")
-    .insert({ url, user_id: user.id })
+    .insert({ url, user_id: userId })
     .select("id")
     .single();
   if (createError) {

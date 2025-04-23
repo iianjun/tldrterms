@@ -1,4 +1,5 @@
 import { CustomResponse } from "@/lib/response";
+import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest } from "next/server";
 
@@ -9,11 +10,8 @@ export async function GET(
   try {
     const { roomId } = await params;
     const supabase = await createClient();
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-    if (userError || !user) {
+    const { userId, isInvalid } = await getAuthentication();
+    if (isInvalid) {
       return CustomResponse.error({
         message: "Unauthorized",
         status: 401,
@@ -32,7 +30,7 @@ export async function GET(
         )
         `)
       .eq("id", Number(roomId))
-      .eq("user_id", user.id)
+      .eq("user_id", userId)
       .single();
     if (!roomData) {
       return CustomResponse.error({

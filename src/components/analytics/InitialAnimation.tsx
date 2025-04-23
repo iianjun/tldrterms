@@ -1,7 +1,11 @@
 "use client";
-import { AnalyzingAnimation, FetchingAnimation } from "@/components/animations";
+import {
+  AnalyzingAnimation,
+  ErrorAnimation,
+  FetchingAnimation,
+} from "@/components/animations";
+import { AIStatus } from "@/types/openai";
 import { motion } from "framer-motion";
-import { useMemo } from "react";
 
 const OPTIONS = {
   variants: {
@@ -13,51 +17,59 @@ const OPTIONS = {
     ease: "easeInOut",
   },
 };
+
+interface Props {
+  status: Exclude<AIStatus, "done">;
+  errorMsg?: string | null;
+}
+
+const TEXT_MAP = {
+  fetching: "Hang tight — we’re reading the fine print for you...",
+  analyzing: "Almost there! We’re scoring the document now...",
+};
+const ANIMATION_MAP = {
+  fetching: <FetchingAnimation />,
+  analyzing: <AnalyzingAnimation />,
+  error: <ErrorAnimation loop={false} autoplay />,
+};
+
+function Animation({ status, errorMsg }: Readonly<Props>) {
+  return (
+    <>
+      <motion.div
+        variants={OPTIONS.variants}
+        transition={OPTIONS.transition}
+        exit={{ opacity: 0 }}
+        initial={status === "fetching" ? "show" : "hide"}
+        animate={"show"}
+        className="absolute w-full"
+      >
+        {ANIMATION_MAP[status]}
+      </motion.div>
+      {(errorMsg || TEXT_MAP[status as keyof typeof TEXT_MAP]) && (
+        <motion.p
+          variants={OPTIONS.variants}
+          transition={OPTIONS.transition}
+          exit={{ opacity: 0 }}
+          initial={status === "fetching" ? "show" : "hide"}
+          animate={"show"}
+          className="absolute top-[calc(100%-2rem)] w-full text-center font-semibold text-2xl"
+        >
+          {errorMsg || TEXT_MAP[status as keyof typeof TEXT_MAP]}
+        </motion.p>
+      )}
+    </>
+  );
+}
 export default function InitialAnimation({
   status,
-}: Readonly<{ status: "fetching" | "analyzing" }>) {
-  const motionProps = useMemo(() => {
-    return {
-      initialShow: {
-        variants: OPTIONS.variants,
-        transition: OPTIONS.transition,
-        initial: "show",
-        animate: status === "fetching" ? "show" : "hide",
-      },
-      initialHide: {
-        variants: OPTIONS.variants,
-        transition: OPTIONS.transition,
-        initial: "hide",
-        animate: status === "fetching" ? "hide" : "show",
-      },
-    };
-  }, [status]);
+  errorMsg,
+}: Readonly<Props>) {
   return (
     <div className="relative h-full w-full">
-      <div className="absolute inset-0 m-auto aspect-[1] w-3/4 max-w-[31.25rem]">
-        <motion.div {...motionProps.initialShow} className="absolute w-full">
-          <FetchingAnimation />
-        </motion.div>
-        <motion.p
-          {...motionProps.initialShow}
-          className="absolute top-full whitespace-nowrap text-center font-semibold text-2xl"
-        >
-          Hang tight — we’re reading the fine print for you…
-        </motion.p>
-        <motion.div {...motionProps.initialHide} className="absolute w-full">
-          <AnalyzingAnimation />
-        </motion.div>
-        <motion.p
-          {...motionProps.initialHide}
-          className="absolute top-full whitespace-nowrap text-center font-semibold text-2xl"
-        >
-          Almost there! We’re scoring the document now…
-        </motion.p>
+      <div className="absolute inset-0 m-auto aspect-[1] w-3/4 max-w-[34rem]">
+        <Animation key={status} status={status} errorMsg={errorMsg} />
       </div>
-      {/* */}
     </div>
   );
 }
-
-// I have two animation components.
-// When one animation is done, I'm going to shrink it and have another component show up
