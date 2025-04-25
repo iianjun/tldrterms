@@ -26,16 +26,14 @@ export async function GET(
         analytics (
           id,
           score,
-          triggered_geopolitical_risk,
+          china_data_processing_details,
           created_at,
           analytic_points (
             id,
-            analytic_id,
             category,
             case_id,
-            rating,
-            importance,
-            description
+            description,
+            score
           )
         )
         `)

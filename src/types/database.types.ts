@@ -12,30 +12,27 @@ export type Database = {
       analytic_points: {
         Row: {
           analytic_id: number;
-          case_id: number;
+          case_id: Database["public"]["Enums"]["analytic_point_case_id"];
           category: Database["public"]["Enums"]["analytic_point_category"];
           description: string;
           id: number;
-          importance: Database["public"]["Enums"]["analytic_point_importance"];
-          rating: Database["public"]["Enums"]["analytic_point_rating"];
+          score: number;
         };
         Insert: {
           analytic_id: number;
-          case_id: number;
+          case_id: Database["public"]["Enums"]["analytic_point_case_id"];
           category: Database["public"]["Enums"]["analytic_point_category"];
           description: string;
           id?: number;
-          importance: Database["public"]["Enums"]["analytic_point_importance"];
-          rating: Database["public"]["Enums"]["analytic_point_rating"];
+          score: number;
         };
         Update: {
           analytic_id?: number;
-          case_id?: number;
+          case_id?: Database["public"]["Enums"]["analytic_point_case_id"];
           category?: Database["public"]["Enums"]["analytic_point_category"];
           description?: string;
           id?: number;
-          importance?: Database["public"]["Enums"]["analytic_point_importance"];
-          rating?: Database["public"]["Enums"]["analytic_point_rating"];
+          score?: number;
         };
         Relationships: [
           {
@@ -73,27 +70,30 @@ export type Database = {
       };
       analytics: {
         Row: {
+          china_data_processing_details: string | null;
           created_at: string;
+          document_type: Database["public"]["Enums"]["analytic_document_type"];
           id: number;
           room_id: number;
           score: number;
-          triggered_geopolitical_risk: boolean;
           user_id: string;
         };
         Insert: {
+          china_data_processing_details?: string | null;
           created_at?: string;
+          document_type: Database["public"]["Enums"]["analytic_document_type"];
           id?: number;
           room_id: number;
           score: number;
-          triggered_geopolitical_risk?: boolean;
           user_id: string;
         };
         Update: {
+          china_data_processing_details?: string | null;
           created_at?: string;
+          document_type?: Database["public"]["Enums"]["analytic_document_type"];
           id?: number;
           room_id?: number;
           score?: number;
-          triggered_geopolitical_risk?: boolean;
           user_id?: string;
         };
         Relationships: [
@@ -114,14 +114,36 @@ export type Database = {
       [_ in never]: never;
     };
     Enums: {
+      analytic_document_type: "terms" | "privacy" | "unknown";
+      analytic_point_case_id:
+        | "1.1"
+        | "1.2"
+        | "1.3"
+        | "2.1"
+        | "2.2"
+        | "3.1"
+        | "3.2"
+        | "4.1"
+        | "4.2"
+        | "4.3"
+        | "4.4"
+        | "5.1"
+        | "5.2"
+        | "5.3"
+        | "6.1"
+        | "6.2"
+        | "6.3"
+        | "7.1"
+        | "7.2"
+        | "7.3";
       analytic_point_category:
-        | "privacy"
-        | "transparency"
-        | "rights"
-        | "security"
-        | "geopolitical_risk";
-      analytic_point_importance: "minor" | "major" | "critical";
-      analytic_point_rating: "good" | "bad" | "neutral";
+        | "clarity"
+        | "user_rights"
+        | "ugc"
+        | "payment"
+        | "changes"
+        | "disputes"
+        | "liability";
       analytic_status_type: "idle" | "error" | "completed";
     };
     CompositeTypes: {
@@ -238,15 +260,38 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      analytic_point_category: [
-        "privacy",
-        "transparency",
-        "rights",
-        "security",
-        "geopolitical_risk",
+      analytic_document_type: ["terms", "privacy", "unknown"],
+      analytic_point_case_id: [
+        "1.1",
+        "1.2",
+        "1.3",
+        "2.1",
+        "2.2",
+        "3.1",
+        "3.2",
+        "4.1",
+        "4.2",
+        "4.3",
+        "4.4",
+        "5.1",
+        "5.2",
+        "5.3",
+        "6.1",
+        "6.2",
+        "6.3",
+        "7.1",
+        "7.2",
+        "7.3",
       ],
-      analytic_point_importance: ["minor", "major", "critical"],
-      analytic_point_rating: ["good", "bad", "neutral"],
+      analytic_point_category: [
+        "clarity",
+        "user_rights",
+        "ugc",
+        "payment",
+        "changes",
+        "disputes",
+        "liability",
+      ],
       analytic_status_type: ["idle", "error", "completed"],
     },
   },

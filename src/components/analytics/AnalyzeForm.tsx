@@ -24,7 +24,7 @@ export default function AnalyzeForm() {
   } = useForm<FormData>({
     resolver: zodResolver(urlSchema),
     defaultValues: {
-      url: "https://boltai.com/terms",
+      url: "https://www.facebook.com/terms/",
     },
   });
   const onSubmit = async ({ url }: FormData) => {
