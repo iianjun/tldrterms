@@ -12,27 +12,30 @@ export type Database = {
       analytic_points: {
         Row: {
           analytic_id: number;
-          case_id: Database["public"]["Enums"]["analytic_point_case_id"];
+          case_id: number;
           category: Database["public"]["Enums"]["analytic_point_category"];
           description: string;
           id: number;
           score: number;
+          text_found: boolean;
         };
         Insert: {
           analytic_id: number;
-          case_id: Database["public"]["Enums"]["analytic_point_case_id"];
+          case_id: number;
           category: Database["public"]["Enums"]["analytic_point_category"];
           description: string;
           id?: number;
           score: number;
+          text_found: boolean;
         };
         Update: {
           analytic_id?: number;
-          case_id?: Database["public"]["Enums"]["analytic_point_case_id"];
+          case_id?: number;
           category?: Database["public"]["Enums"]["analytic_point_category"];
           description?: string;
           id?: number;
           score?: number;
+          text_found?: boolean;
         };
         Relationships: [
           {
@@ -81,7 +84,7 @@ export type Database = {
         Insert: {
           china_data_processing_details?: string | null;
           created_at?: string;
-          document_type: Database["public"]["Enums"]["analytic_document_type"];
+          document_type?: Database["public"]["Enums"]["analytic_document_type"];
           id?: number;
           room_id: number;
           score: number;
@@ -106,6 +109,53 @@ export type Database = {
           },
         ];
       };
+      categories: {
+        Row: {
+          category_id: Database["public"]["Enums"]["analytic_point_category"];
+          id: number;
+          title: string;
+        };
+        Insert: {
+          category_id: Database["public"]["Enums"]["analytic_point_category"];
+          id?: number;
+          title: string;
+        };
+        Update: {
+          category_id?: Database["public"]["Enums"]["analytic_point_category"];
+          id?: number;
+          title?: string;
+        };
+        Relationships: [];
+      };
+      criteria: {
+        Row: {
+          case_id: number;
+          category_id: number;
+          id: number;
+          title: string;
+        };
+        Insert: {
+          case_id: number;
+          category_id: number;
+          id?: number;
+          title: string;
+        };
+        Update: {
+          case_id?: number;
+          category_id?: number;
+          id?: number;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "criteria_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -115,35 +165,22 @@ export type Database = {
     };
     Enums: {
       analytic_document_type: "terms" | "privacy" | "unknown";
-      analytic_point_case_id:
-        | "1.1"
-        | "1.2"
-        | "1.3"
-        | "2.1"
-        | "2.2"
-        | "3.1"
-        | "3.2"
-        | "4.1"
-        | "4.2"
-        | "4.3"
-        | "4.4"
-        | "5.1"
-        | "5.2"
-        | "5.3"
-        | "6.1"
-        | "6.2"
-        | "6.3"
-        | "7.1"
-        | "7.2"
-        | "7.3";
       analytic_point_category:
-        | "clarity"
+        | "tc_clarity"
         | "user_rights"
         | "ugc"
         | "payment"
-        | "changes"
+        | "tc_changes"
         | "disputes"
-        | "liability";
+        | "liability"
+        | "pp_clarity"
+        | "collection"
+        | "usage"
+        | "sharing"
+        | "user_control"
+        | "security"
+        | "pp_changes"
+        | "children";
       analytic_status_type: "idle" | "error" | "completed";
     };
     CompositeTypes: {
@@ -261,36 +298,22 @@ export const Constants = {
   public: {
     Enums: {
       analytic_document_type: ["terms", "privacy", "unknown"],
-      analytic_point_case_id: [
-        "1.1",
-        "1.2",
-        "1.3",
-        "2.1",
-        "2.2",
-        "3.1",
-        "3.2",
-        "4.1",
-        "4.2",
-        "4.3",
-        "4.4",
-        "5.1",
-        "5.2",
-        "5.3",
-        "6.1",
-        "6.2",
-        "6.3",
-        "7.1",
-        "7.2",
-        "7.3",
-      ],
       analytic_point_category: [
-        "clarity",
+        "tc_clarity",
         "user_rights",
         "ugc",
         "payment",
-        "changes",
+        "tc_changes",
         "disputes",
         "liability",
+        "pp_clarity",
+        "collection",
+        "usage",
+        "sharing",
+        "user_control",
+        "security",
+        "pp_changes",
+        "children",
       ],
       analytic_status_type: ["idle", "error", "completed"],
     },
