@@ -1,6 +1,7 @@
 import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
+import { sortBy } from "lodash";
 import { NextRequest } from "next/server";
 
 export async function GET(
@@ -28,12 +29,14 @@ export async function GET(
           score,
           china_data_processing_details,
           created_at,
+          document_type,
           analytic_points (
             id,
             category,
             case_id,
             description,
-            score
+            score,
+            text_found
           )
         )
         `)
@@ -46,6 +49,13 @@ export async function GET(
         message: "Room not found",
         status: 404,
       });
+    }
+    //sort by case id
+    if (roomData.analytics?.analytic_points?.length) {
+      roomData.analytics.analytic_points = sortBy(
+        roomData.analytics?.analytic_points,
+        "case_id"
+      );
     }
     return CustomResponse.success({
       data: roomData,

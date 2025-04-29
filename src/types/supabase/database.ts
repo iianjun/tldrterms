@@ -79,6 +79,7 @@ export type Database = {
           id: number;
           room_id: number;
           score: number;
+          score_category: Database["public"]["Enums"]["score_category"];
           user_id: string;
         };
         Insert: {
@@ -87,7 +88,8 @@ export type Database = {
           document_type?: Database["public"]["Enums"]["analytic_document_type"];
           id?: number;
           room_id: number;
-          score: number;
+          score?: number;
+          score_category: Database["public"]["Enums"]["score_category"];
           user_id: string;
         };
         Update: {
@@ -97,6 +99,7 @@ export type Database = {
           id?: number;
           room_id?: number;
           score?: number;
+          score_category?: Database["public"]["Enums"]["score_category"];
           user_id?: string;
         };
         Relationships: [
@@ -182,6 +185,14 @@ export type Database = {
         | "pp_changes"
         | "children";
       analytic_status_type: "idle" | "error" | "completed";
+      score_category:
+        | "excellent"
+        | "good"
+        | "neutral"
+        | "concerning_minor"
+        | "concerning_major"
+        | "potentially_harmful"
+        | "incomplete_potentially_risky";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -316,6 +327,15 @@ export const Constants = {
         "children",
       ],
       analytic_status_type: ["idle", "error", "completed"],
+      score_category: [
+        "excellent",
+        "good",
+        "neutral",
+        "concerning_minor",
+        "concerning_major",
+        "potentially_harmful",
+        "incomplete_potentially_risky",
+      ],
     },
   },
 } as const;

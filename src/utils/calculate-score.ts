@@ -1,4 +1,4 @@
-import { AnalyticPoint, AssessmentCategory } from "@/types/openai";
+import { AnalyticPoint, ScoreCategory } from "@/types/supabase";
 
 const THRESHOLD = {
   lowCoverage: 0.45,
@@ -8,51 +8,81 @@ const THRESHOLD = {
   scoreNeutral: 3,
   scoreConcerningMinor: -4,
 };
+
 interface AssessmentRes {
   score: number;
-  category: AssessmentCategory;
+  category: ScoreCategory;
 }
-export function calculateScore(points: AnalyticPoint[]): AssessmentRes {
-  const totalPoints = points.length;
-  const HIGH_NEGATIVE_THRESHOLD = totalPoints * 0.2;
 
+export function calculateScore(points: AnalyticPoint[]): AssessmentRes {
+  const category = calculateScoreCategory(points);
+  const score = calculatePercentageScore(points);
+  return { score, category };
+}
+
+function calculateScoreCategory(points: AnalyticPoint[]): ScoreCategory {
+  const { required, optional } = points.reduce(
+    (acc, point) => {
+      acc.required += point.category === "payment" ? 0 : 1;
+      acc.optional += point.category === "payment" && point.text_found ? 1 : 0;
+      return acc;
+    },
+    { required: 0, optional: 0 }
+  );
+  const TOTAL_LENGTH = required + optional;
+  const HIGH_NEGATIVE_THRESHOLD = TOTAL_LENGTH * 0.2;
   const { totalScore, negativeCount, notFoundCount } = points.reduce(
     (acc, point) => {
       acc.totalScore += point.score;
       if (point.score < 0) acc.negativeCount += 1;
-      if (!point.text_found) acc.notFoundCount += 1;
+      if (!point.text_found && point.category !== "payment")
+        acc.notFoundCount += 1;
       return acc;
     },
     { totalScore: 0, negativeCount: 0, notFoundCount: 0 }
   );
 
-  const coverage = (totalPoints - notFoundCount) / totalPoints;
+  const coverage = (TOTAL_LENGTH - notFoundCount) / TOTAL_LENGTH;
   const exceedNegThreshold = negativeCount >= HIGH_NEGATIVE_THRESHOLD;
-
-  const res: Partial<AssessmentRes> = {
-    score: totalScore,
-  };
   // low coverage
   if (coverage < THRESHOLD.lowCoverage) {
-    res["category"] = "incomplete_potentially_risky";
-    return res as AssessmentRes;
+    return "incomplete_potentially_risky";
   }
   if (exceedNegThreshold) {
     if (totalScore <= THRESHOLD.scoreHarmful) {
-      res["category"] = "potentially_harmful";
+      return "potentially_harmful";
     } else {
-      res["category"] = "concerning_major";
+      return "concerning_major";
     }
-    return res as AssessmentRes;
   }
   if (totalScore >= THRESHOLD.scoreExcellent) {
-    res["category"] = "excellent";
+    return "excellent";
   } else if (totalScore >= THRESHOLD.scoreGood) {
-    res["category"] = "good";
+    return "good";
   } else if (totalScore > THRESHOLD.scoreConcerningMinor) {
-    res["category"] = "neutral";
+    return "neutral";
   } else {
-    res["category"] = "concerning_minor";
+    return "concerning_minor";
   }
-  return res as AssessmentRes;
+}
+
+// use penalty base system
+function calculatePercentageScore(points: AnalyticPoint[]) {
+  const score = points.reduce((acc, point) => {
+    if (point.text_found) {
+      if (point.score === -1) {
+        acc -= 5;
+      } else if (point.score === -2) {
+        acc -= 10;
+      }
+    } else {
+      if (point.category !== "payment") {
+        acc -= 2;
+      }
+    }
+    return acc;
+  }, 100);
+  // 3. Ensure score is within 0-100 bounds and return integer
+  const finalScore = Math.max(0, Math.min(100, score));
+  return Math.round(finalScore);
 }

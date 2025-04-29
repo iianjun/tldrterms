@@ -112,9 +112,8 @@ async function getChatResponse({
   const content = chatResponse.choices[0].message.content;
   const data = JSON.parse(content || "{}") as OpenAIAnalayzedResponse;
   const assessment = calculateScore(data.points);
-
   data["score"] = assessment.score;
-  data["category"] = assessment.category;
+  data["score_category"] = assessment.category;
   return data;
 }
 
@@ -420,37 +419,41 @@ export async function GET(
         ) {
           throw new Error(analysisResult.message);
         }
-        const { score, china_data_processing_details, points } =
+        calculateScore;
+        const { score, score_category, china_data_processing_details, points } =
           analysisResult.result;
         console.info(`Start saving for ${url}...`);
-        const { data, error: analyticError } = await supabase
+        const { data: analytic, error: analyticError } = await supabase
           .from("analytics")
           .insert({
             score,
+            score_category,
             document_type: fetchingResult.result.document_type,
             user_id: userId,
             room_id: Number(roomId),
             china_data_processing_details,
           })
-          .select("id")
+          .select("*")
           .single();
 
-        if (!data || analyticError) {
+        if (!analytic || analyticError) {
           console.error(`analyticError: `, analyticError);
           throw new Error("Error analyzing the content.");
         }
-        const { error: analyticPointError } = await supabase
-          .from("analytic_points")
-          .insert(
-            points.map((point) => ({
-              analytic_id: data.id,
-              category: point.category,
-              case_id: point.case_id,
-              description: point.description,
-              score: point.score,
-              text_found: point.text_found,
-            }))
-          );
+        const { data: analytic_points, error: analyticPointError } =
+          await supabase
+            .from("analytic_points")
+            .insert(
+              points.map((point) => ({
+                analytic_id: analytic.id,
+                category: point.category,
+                case_id: point.case_id,
+                description: point.description,
+                score: point.score,
+                text_found: point.text_found,
+              }))
+            )
+            .select("*");
         if (analyticPointError) {
           console.error(`analyticPointError`, analyticPointError);
           throw new Error("Error analyzing the content.");
@@ -464,7 +467,11 @@ export async function GET(
 
         send({
           success: true,
-          data: { status: "done", ...analysisResult.result },
+          data: {
+            status: "done",
+            ...analytic,
+            analytic_points: analytic_points,
+          },
         });
       } catch (e) {
         console.error(e);

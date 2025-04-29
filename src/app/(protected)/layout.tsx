@@ -19,7 +19,7 @@ export default async function ProtectedLayout({
         <AppSidebar />
         <div className="flex flex-1 flex-col">
           <ProtectedHeader />
-          <main className="@container flex-1 px-2 md:px-4">{children}</main>
+          <main className="flex-1 px-2 md:px-4">{children}</main>
         </div>
       </SidebarProvider>
     </UserStoreProvider>

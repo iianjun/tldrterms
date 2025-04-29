@@ -24,7 +24,7 @@ export default function AnalyzeForm() {
   } = useForm<FormData>({
     resolver: zodResolver(urlSchema),
     defaultValues: {
-      url: "https://www.facebook.com/terms/",
+      url: "https://hellohealthgroup.com/terms-of-service/",
     },
   });
   const onSubmit = async ({ url }: FormData) => {
@@ -39,14 +39,14 @@ export default function AnalyzeForm() {
   };
   return (
     <div className="h-full flex-center">
-      <div className="flex @md:h-auto h-full w-full flex-col items-center gap-6">
-        <h1 className="flex w-full flex-1 flex-col items-center justify-center text-center @md:text-3xl text-2xl text-primary tracking-tight">
+      <div className="flex h-full w-full flex-col items-center gap-6 md:h-auto">
+        <h1 className="flex w-full flex-1 flex-col items-center justify-center text-center text-2xl text-primary tracking-tight md:text-3xl">
           Got a terms page?
           <TextShimmer as="span">We’ll make sense of it.</TextShimmer>
         </h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="relative @md:mb-0 mb-4 flex w-full max-w-[36rem]"
+          className="relative mb-4 flex w-full max-w-[36rem] md:mb-0"
         >
           <Input
             className={"h-auto py-3 pe-12"}

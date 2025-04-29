@@ -1,6 +1,6 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse } from "@/types/api";
-import { AnalyticRoom } from "@/types/openai";
+import { AnalyticRoom } from "@/types/supabase";
 
 export function getAnalyticsRoomById(data: { roomId: string }): Promise<
   ApiResponse<AnalyticRoom>

@@ -4,7 +4,7 @@ import {
   ErrorAnimation,
   FetchingAnimation,
 } from "@/components/animations";
-import { AIStatus } from "@/types/openai";
+import { SSEStatus } from "@/types/openai";
 import { motion } from "framer-motion";
 
 const OPTIONS = {
@@ -19,7 +19,7 @@ const OPTIONS = {
 };
 
 interface Props {
-  status: Exclude<AIStatus, "done">;
+  status: Exclude<SSEStatus, "done">;
   errorMsg?: string | null;
 }
 

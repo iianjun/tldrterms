@@ -1,12 +1,10 @@
 "use client";
+import AnalyticsResult from "@/components/analytics/AnalyticsResult";
 import InitialAnimation from "@/components/analytics/InitialAnimation";
 import { useSSE } from "@/hooks/useSSE";
 import { ApiResponse } from "@/types/api";
-import {
-  AIStatus,
-  AnalyticRoom as AnalyticRoomType,
-  OpenAIAnalayzedResponse,
-} from "@/types/openai";
+import { SSEStatus } from "@/types/openai";
+import { Analytic, AnalyticRoom as AnalyticRoomType } from "@/types/supabase";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -14,18 +12,22 @@ interface Props {
 }
 
 export default function AnalyticRoom({ room }: Readonly<Props>) {
-  const [status, setStatus] = useState<AIStatus>(() => {
+  const [analytic, setAnalytic] = useState<Analytic | null>(
+    room.analytics ?? null
+  );
+  const [status, setStatus] = useState<SSEStatus>(() => {
     if (room.analytic_status === "error") return "error";
     if (room.analytic_status === "completed") return "done";
     return "fetching";
   });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const { data, close } = useSSE<
-    ApiResponse<{ status: AIStatus } & OpenAIAnalayzedResponse>
-  >({
-    url: `/api/v1/analytics/${room.id}/stream`,
-    enabled: room.analytic_status === "idle",
-  });
+
+  const { data, close } = useSSE<ApiResponse<{ status: SSEStatus } & Analytic>>(
+    {
+      url: `/api/v1/analytics/${room.id}/stream`,
+      enabled: room.analytic_status === "idle",
+    }
+  );
 
   useEffect(() => {
     if (!data) return;
@@ -36,14 +38,24 @@ export default function AnalyticRoom({ room }: Readonly<Props>) {
       setErrorMsg(error || "An error occurred");
       close();
     } else {
-      setStatus(result.status);
+      const { status, ...analytic } = result;
+      setStatus(status);
+      setAnalytic(analytic);
       setErrorMsg(null);
+      if (status === "done") {
+        close();
+      }
     }
   }, [data, close]);
 
-  if (status !== "done") {
-    return <InitialAnimation status={status} errorMsg={errorMsg} />;
+  if (status !== "done" || !analytic) {
+    return (
+      <InitialAnimation
+        status={status as Exclude<SSEStatus, "done">}
+        errorMsg={errorMsg}
+      />
+    );
   }
   //   TODO: show analytic result ui
-  return <></>;
+  return <AnalyticsResult analytic={analytic} url={room.url} />;
 }

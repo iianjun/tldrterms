@@ -1,6 +1,5 @@
 "use client";
 import { useMounted } from "@/hooks/useMounted";
-import {} from "@/types/openai";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface UseSSEResult<T> {
