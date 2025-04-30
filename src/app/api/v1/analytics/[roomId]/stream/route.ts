@@ -188,6 +188,7 @@ The JSON object MUST contain ONLY the following keys at the top level:
 
 \`\`\`json
 {
+"summary": "string",
 "china_data_processing_details": "string | null",
 "points": [
   {
@@ -202,11 +203,13 @@ The JSON object MUST contain ONLY the following keys at the top level:
 \`\`\`
 
 **Instructions for JSON field values:**
-
-1.  \`china_data_processing_details\`:
+1. \`summary\`: A **string**. **CRITICAL CONDITIONAL LOGIC:**
+    * **IF** the result of the China data check (which populates \`china_data_processing_details\`) is **NOT null**: The summary MUST focus exclusively on reporting this China-related finding. **Examples:** "The terms indicate user data may be stored in or processed by entities located in China." **OR** "The terms indicate user data may be shared with third-party companies based in China."
+    * **ELSE IF** the result of the China data check is **null**: The summary MUST provide a concise (2-4 sentence) user-centric overview of the main Terms & Conditions analysis (based on the 'points' array). Highlight major pros (e.g., criterion with score +2) and cons (e.g., criterion with score -2, high number of negative points, significant low coverage indicated by many 'text_found: false' entries).
+2.  \`china_data_processing_details\`:
   * IF the **provided T&C text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** briefly explaining the finding (e.g., "Text mentions data transfer to or processing by entities in China.").
   * OTHERWISE (if no such mention is found), set this field to \`null\`.
-2.  \`points\`:
+3.  \`points\`:
   * This MUST be an array of objects.
   * Each object in the array represents a scored criterion from the main analysis (Categories 1-7).
   * For each object:
@@ -303,6 +306,7 @@ The JSON object MUST contain ONLY the following keys at the top level:
 
 \`\`\`json
 {
+"summary": "string",
 "china_data_processing_details": "string | null",
 "points": [
   {
@@ -318,10 +322,13 @@ The JSON object MUST contain ONLY the following keys at the top level:
 
 **Instructions for JSON field values:**
 
-1.  \`china_data_processing_details\`:
+1. \`summary\`: A **string**. **CRITICAL CONDITIONAL LOGIC:**
+    * **IF** the result of the China data check (which populates \`china_data_processing_details\`) is **NOT null**: The summary MUST focus exclusively on reporting this China-related finding. **Examples:** "The privacy Policy indicates user data may be stored in or processed by entities located in China." **OR** "The privacy policy indicates user data may be shared with third-party companies based in China."
+    * **ELSE IF** the result of the China data check is **null**: The summary MUST provide a concise (2-4 sentence) user-centric overview of the main Privacy Policy analysis (based on the 'points' array). Highlight major pros (e.g., criterion with score +2) and cons (e.g., criterion with score -2, high number of negative points, significant low coverage indicated by many 'text_found: false' entries).
+2.  \`china_data_processing_details\`:
   * IF the **provided Privacy Policy text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** briefly explaining the finding (e.g., "Text mentions data transfer to or processing by entities in China.").
   * OTHERWISE (if no such mention is found), set this field to \`null\`.
-2.  \`points\`:
+3.  \`points\`:
   * This MUST be an array of objects.
   * Each object in the array represents a scored criterion from the main analysis (Categories 1-8).
   * For each object:
@@ -420,14 +427,20 @@ export async function GET(
           throw new Error(analysisResult.message);
         }
         calculateScore;
-        const { score, score_category, china_data_processing_details, points } =
-          analysisResult.result;
+        const {
+          score,
+          summary,
+          score_category,
+          china_data_processing_details,
+          points,
+        } = analysisResult.result;
         console.info(`Start saving for ${url}...`);
         const { data: analytic, error: analyticError } = await supabase
           .from("analytics")
           .insert({
             score,
             score_category,
+            summary,
             document_type: fetchingResult.result.document_type,
             user_id: userId,
             room_id: Number(roomId),

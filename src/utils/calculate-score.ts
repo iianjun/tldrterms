@@ -2,13 +2,12 @@ import { AnalyticPoint, ScoreCategory } from "@/types/supabase";
 
 const THRESHOLD = {
   lowCoverage: 0.45,
-  scoreHarmful: -8,
-  scoreExcellent: 10,
-  scoreGood: 4,
-  scoreNeutral: 3,
-  scoreConcerningMinor: -4,
+  harmful: 40.0,
+  excellent: 62.5,
+  good: 55.0,
+  concerningMinor: 45.0,
 };
-
+const HIGH_NEGATIVE_THRESHOLD_PERCENT = 0.2;
 interface AssessmentRes {
   score: number;
   category: ScoreCategory;
@@ -30,7 +29,9 @@ function calculateScoreCategory(points: AnalyticPoint[]): ScoreCategory {
     { required: 0, optional: 0 }
   );
   const TOTAL_LENGTH = required + optional;
-  const HIGH_NEGATIVE_THRESHOLD = TOTAL_LENGTH * 0.2;
+  const HIGH_NEGATIVE_THRESHOLD =
+    TOTAL_LENGTH * HIGH_NEGATIVE_THRESHOLD_PERCENT;
+
   const { totalScore, negativeCount, notFoundCount } = points.reduce(
     (acc, point) => {
       acc.totalScore += point.score;
@@ -44,22 +45,31 @@ function calculateScoreCategory(points: AnalyticPoint[]): ScoreCategory {
 
   const coverage = (TOTAL_LENGTH - notFoundCount) / TOTAL_LENGTH;
   const exceedNegThreshold = negativeCount >= HIGH_NEGATIVE_THRESHOLD;
+
+  const maxPossibleScore = TOTAL_LENGTH * 2;
+  const minPossibleScore = TOTAL_LENGTH * -2;
+  const totalRange = maxPossibleScore - minPossibleScore;
+
+  const normalizedScore = Math.max(
+    0,
+    Math.min(100, ((totalScore - minPossibleScore) / totalRange) * 100)
+  );
   // low coverage
   if (coverage < THRESHOLD.lowCoverage) {
     return "incomplete_potentially_risky";
   }
   if (exceedNegThreshold) {
-    if (totalScore <= THRESHOLD.scoreHarmful) {
+    if (normalizedScore <= THRESHOLD.harmful) {
       return "potentially_harmful";
     } else {
       return "concerning_major";
     }
   }
-  if (totalScore >= THRESHOLD.scoreExcellent) {
+  if (normalizedScore >= THRESHOLD.excellent) {
     return "excellent";
-  } else if (totalScore >= THRESHOLD.scoreGood) {
+  } else if (normalizedScore >= THRESHOLD.good) {
     return "good";
-  } else if (totalScore > THRESHOLD.scoreConcerningMinor) {
+  } else if (normalizedScore > THRESHOLD.concerningMinor) {
     return "neutral";
   } else {
     return "concerning_minor";

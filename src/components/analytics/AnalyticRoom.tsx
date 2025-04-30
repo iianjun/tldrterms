@@ -56,6 +56,5 @@ export default function AnalyticRoom({ room }: Readonly<Props>) {
       />
     );
   }
-  //   TODO: show analytic result ui
   return <AnalyticsResult analytic={analytic} url={room.url} />;
 }

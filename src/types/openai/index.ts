@@ -6,6 +6,7 @@ export interface OpenAIAnalayzedResponse {
   document_type: DocumentType;
   points: AnalyticPoint[];
   china_data_processing_details?: string | null;
+  summary: string;
 }
 
 export interface OpenAIValidationResponse {

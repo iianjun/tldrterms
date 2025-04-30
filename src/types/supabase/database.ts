@@ -80,6 +80,7 @@ export type Database = {
           room_id: number;
           score: number;
           score_category: Database["public"]["Enums"]["score_category"];
+          summary: string;
           user_id: string;
         };
         Insert: {
@@ -90,6 +91,7 @@ export type Database = {
           room_id: number;
           score?: number;
           score_category: Database["public"]["Enums"]["score_category"];
+          summary: string;
           user_id: string;
         };
         Update: {
@@ -100,6 +102,7 @@ export type Database = {
           room_id?: number;
           score?: number;
           score_category?: Database["public"]["Enums"]["score_category"];
+          summary?: string;
           user_id?: string;
         };
         Relationships: [

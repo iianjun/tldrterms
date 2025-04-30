@@ -27,6 +27,8 @@ export async function GET(
         analytics (
           id,
           score,
+          summary,
+          score_category,
           china_data_processing_details,
           created_at,
           document_type,
