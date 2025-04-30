@@ -50,7 +50,9 @@ function AnalyticPointCard({
             </div>
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <CardTitle className="text-base">{title}</CardTitle>
+                <CardTitle variant="h4" className="text-base">
+                  {title}
+                </CardTitle>
                 <span className="rounded-full bg-muted px-1.5 py-0.5 text-muted-foreground text-xs">
                   {
                     SOURCE_MAP[

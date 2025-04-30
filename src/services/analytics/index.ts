@@ -18,3 +18,9 @@ export function createRoom(data: { url: string }): Promise<
     body: data,
   });
 }
+
+export function getRooms(): Promise<ApiResponse<AnalyticRoom[]>> {
+  return apiClient("/rooms", {
+    method: "GET",
+  });
+}

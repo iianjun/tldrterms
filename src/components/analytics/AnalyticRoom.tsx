@@ -20,7 +20,9 @@ export default function AnalyticRoom({ room }: Readonly<Props>) {
     if (room.analytic_status === "completed") return "done";
     return "fetching";
   });
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(
+    room.error_msg ?? null
+  );
 
   const { data, close } = useSSE<ApiResponse<{ status: SSEStatus } & Analytic>>(
     {

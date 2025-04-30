@@ -2,8 +2,26 @@ import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeToWww } from "@/utils/website";
-
 import { NextRequest } from "next/server";
+
+export async function GET() {
+  const supabase = await createClient();
+  const { userId, isInvalid } = await getAuthentication();
+  if (isInvalid) {
+    return CustomResponse.error({
+      message: "Unauthorized",
+      status: 401,
+    });
+  }
+  const { data: rooms } = await supabase
+    .from("analytic_rooms")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  return CustomResponse.success({
+    data: rooms,
+  });
+}
 
 export async function POST(req: NextRequest) {
   const { url } = await req.json();

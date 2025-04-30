@@ -1,5 +1,6 @@
 "use client";
 import AnalyticGroup from "@/components/analytics/AnalyticGroup";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -160,7 +161,7 @@ function AnalyticsResult({ analytic, url }: Readonly<Props>) {
           </CardContent>
         </Card>
       </div>
-      <Card className="mb-8">
+      <Card>
         <CardHeader>
           <CardTitle
             variant="h2"
@@ -191,6 +192,11 @@ function AnalyticsResult({ analytic, url }: Readonly<Props>) {
           </div>
         </CardContent>
       </Card>
+      <div className="flex justify-center">
+        <Button asChild>
+          <Link href="/analytics">Analyze Another Document</Link>
+        </Button>
+      </div>
     </div>
   );
 }

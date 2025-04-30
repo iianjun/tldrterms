@@ -24,6 +24,7 @@ export async function GET(
         id,
         url,
         analytic_status,
+        error_msg,
         analytics (
           id,
           score,
