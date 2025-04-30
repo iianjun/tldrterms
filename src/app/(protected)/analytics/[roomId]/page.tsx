@@ -8,11 +8,19 @@ export default async function Page({
   params,
 }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = await params;
-  const [
-    { data: room, error: roomError },
-    { data: categories, error: categoryError },
-  ] = await Promise.all([getAnalyticsRoomById({ roomId }), getCategories()]);
-
+  let roomResult, categoriesResult;
+  try {
+    [roomResult, categoriesResult] = await Promise.all([
+      getAnalyticsRoomById({ roomId }),
+      getCategories(),
+    ]);
+  } catch (error: any) {
+    const status = error?.response?.status ?? error?.status;
+    if (status === 404) return notFound();
+    throw error;
+  }
+  const { data: room, error: roomError } = roomResult;
+  const { data: categories, error: categoryError } = categoriesResult;
   if (!room || roomError || !categories || categoryError) return notFound();
   return (
     <CategoryStoreProvider categories={categories}>

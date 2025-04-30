@@ -7,6 +7,7 @@ export interface OpenAIAnalayzedResponse {
   points: AnalyticPoint[];
   china_data_processing_details?: string | null;
   summary: string;
+  title: string | null;
 }
 
 export interface OpenAIValidationResponse {

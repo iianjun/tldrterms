@@ -1,6 +1,7 @@
 import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
+import { normalizeToWww } from "@/utils/website";
 
 import { NextRequest } from "next/server";
 
@@ -12,6 +13,7 @@ export async function POST(req: NextRequest) {
       status: 400,
     });
   }
+  const newUrl = normalizeToWww(url);
   const supabase = await createClient();
   const { userId, isInvalid } = await getAuthentication();
   if (isInvalid) {
@@ -22,7 +24,7 @@ export async function POST(req: NextRequest) {
   }
   const { data, error: createError } = await supabase
     .from("analytic_rooms")
-    .insert({ url, user_id: userId })
+    .insert({ url: newUrl, user_id: userId })
     .select("id")
     .single();
   if (createError) {

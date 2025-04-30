@@ -51,21 +51,27 @@ export type Database = {
         Row: {
           analytic_status: Database["public"]["Enums"]["analytic_status_type"];
           created_at: string;
+          error_msg: string | null;
           id: number;
+          title: string | null;
           url: string;
           user_id: string;
         };
         Insert: {
           analytic_status?: Database["public"]["Enums"]["analytic_status_type"];
           created_at?: string;
+          error_msg?: string | null;
           id?: number;
+          title?: string | null;
           url: string;
           user_id: string;
         };
         Update: {
           analytic_status?: Database["public"]["Enums"]["analytic_status_type"];
           created_at?: string;
+          error_msg?: string | null;
           id?: number;
+          title?: string | null;
           url?: string;
           user_id?: string;
         };

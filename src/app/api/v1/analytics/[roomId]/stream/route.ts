@@ -10,7 +10,7 @@ import { calculateScore } from "@/utils/calculate-score";
 import {
   getWebsiteTextUndici,
   getWebsiteTextWithPuppeteer,
-} from "@/utils/get-website";
+} from "@/utils/website";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -188,28 +188,34 @@ The JSON object MUST contain ONLY the following keys at the top level:
 
 \`\`\`json
 {
-"summary": "string",
-"china_data_processing_details": "string | null",
-"points": [
-  {
-    "category": "string",
-    "case_id": "number",
-    "score": "number",
-    "description": "string",
-    "text_found": "boolean"
-  }
-]
+  "title": "string | null",
+  "summary": "string",
+  "china_data_processing_details": "string | null",
+  "points": [
+    {
+      "category": "string",
+      "case_id": "number",
+      "score": "number",
+      "description": "string",
+      "text_found": "boolean"
+    }
+  ]
+}
 }
 \`\`\`
 
 **Instructions for JSON field values:**
-1. \`summary\`: A **string**. **CRITICAL CONDITIONAL LOGIC:**
+1.  \`title\`: A **string | null**. Determine the title based on the following priority, using *only* the provided text content:
+    * **Priority 1: Service Name:** If a specific service name (e.g., 'Facebook', 'Acme Service', 'TL;DR terms') is clearly and prominently identified as the subject of the Terms, return that service name.
+    * **Priority 2: Company Name:** If a specific service name is not clearly identifiable from the text, but a primary company name governing the service *is* clearly identifiable, return that company name. **Preference:** If both a common brand name (e.g., 'Meta', 'Google') and a full legal entity name (e.g., 'Meta Platforms, Inc.', 'Google LLC') are present and clearly refer to the same entity governing the service, **prefer the shorter, common brand name** (e.g., return 'Meta' instead of 'Meta Platforms, Inc.').
+    * **Priority 3: Null:** If neither a clear service name nor a clear company name can be identified from the text, set this field to **\`null\`**.
+2. \`summary\`: A **string**. **CRITICAL CONDITIONAL LOGIC:**
     * **IF** the result of the China data check (which populates \`china_data_processing_details\`) is **NOT null**: The summary MUST focus exclusively on reporting this China-related finding. **Examples:** "The terms indicate user data may be stored in or processed by entities located in China." **OR** "The terms indicate user data may be shared with third-party companies based in China."
     * **ELSE IF** the result of the China data check is **null**: The summary MUST provide a concise (2-4 sentence) user-centric overview of the main Terms & Conditions analysis (based on the 'points' array). Highlight major pros (e.g., criterion with score +2) and cons (e.g., criterion with score -2, high number of negative points, significant low coverage indicated by many 'text_found: false' entries).
-2.  \`china_data_processing_details\`:
+3. \`china_data_processing_details\`:
   * IF the **provided T&C text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** briefly explaining the finding (e.g., "Text mentions data transfer to or processing by entities in China.").
   * OTHERWISE (if no such mention is found), set this field to \`null\`.
-3.  \`points\`:
+4. \`points\`:
   * This MUST be an array of objects.
   * Each object in the array represents a scored criterion from the main analysis (Categories 1-7).
   * For each object:
@@ -306,29 +312,34 @@ The JSON object MUST contain ONLY the following keys at the top level:
 
 \`\`\`json
 {
-"summary": "string",
-"china_data_processing_details": "string | null",
-"points": [
-  {
-    "category": "string",
-    "case_id": "number",
-    "score": "number",
-    "description": "string",
-    "text_found": "boolean"
-  }
-]
+  "title": "string | null",
+  "summary": "string",
+  "china_data_processing_details": "string | null",
+  "points": [
+    {
+      "category": "string",
+      "case_id": "number",
+      "score": "number",
+      "description": "string",
+      "text_found": "boolean"
+    }
+  ]
 }
 \`\`\`
 
 **Instructions for JSON field values:**
 
-1. \`summary\`: A **string**. **CRITICAL CONDITIONAL LOGIC:**
+1.  \`title\`: A **string | null**. Determine the title based on the following priority, using *only* the provided text content:
+    * **Priority 1: Service Name:** If a specific service name (e.g., 'Facebook', 'Acme Service', 'TL;DR terms') is clearly and prominently identified as the subject of the Privacy Policy, return that service name.
+    * **Priority 2: Company Name:** If a specific service name is not clearly identifiable from the text, but a primary company name governing the service *is* clearly identifiable, return that company name. **Preference:** If both a common brand name (e.g., 'Meta', 'Google') and a full legal entity name (e.g., 'Meta Platforms, Inc.', 'Google LLC') are present and clearly refer to the same entity governing the service, **prefer the shorter, common brand name** (e.g., return 'Meta' instead of 'Meta Platforms, Inc.').
+    * **Priority 3: Null:** If neither a clear service name nor a clear company name can be identified from the text, set this field to **\`null\`**.
+2. \`summary\`: A **string**. **CRITICAL CONDITIONAL LOGIC:**
     * **IF** the result of the China data check (which populates \`china_data_processing_details\`) is **NOT null**: The summary MUST focus exclusively on reporting this China-related finding. **Examples:** "The privacy Policy indicates user data may be stored in or processed by entities located in China." **OR** "The privacy policy indicates user data may be shared with third-party companies based in China."
     * **ELSE IF** the result of the China data check is **null**: The summary MUST provide a concise (2-4 sentence) user-centric overview of the main Privacy Policy analysis (based on the 'points' array). Highlight major pros (e.g., criterion with score +2) and cons (e.g., criterion with score -2, high number of negative points, significant low coverage indicated by many 'text_found: false' entries).
-2.  \`china_data_processing_details\`:
+3. \`china_data_processing_details\`:
   * IF the **provided Privacy Policy text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** briefly explaining the finding (e.g., "Text mentions data transfer to or processing by entities in China.").
   * OTHERWISE (if no such mention is found), set this field to \`null\`.
-3.  \`points\`:
+4. \`points\`:
   * This MUST be an array of objects.
   * Each object in the array represents a scored criterion from the main analysis (Categories 1-8).
   * For each object:
@@ -426,15 +437,21 @@ export async function GET(
         ) {
           throw new Error(analysisResult.message);
         }
-        calculateScore;
         const {
           score,
           summary,
           score_category,
           china_data_processing_details,
           points,
+          title,
         } = analysisResult.result;
         console.info(`Start saving for ${url}...`);
+        await supabase
+          .from("analytic_rooms")
+          .update({
+            title,
+          })
+          .eq("id", Number(roomId));
         const { data: analytic, error: analyticError } = await supabase
           .from("analytics")
           .insert({
@@ -493,6 +510,7 @@ export async function GET(
           .from("analytic_rooms")
           .update({
             analytic_status: "error",
+            error_msg: message,
           })
           .eq("id", Number(roomId));
         send({ success: false, error: message, data: { status: "error" } });

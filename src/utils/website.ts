@@ -77,3 +77,24 @@ export async function getWebsiteTextUndici(url: string): Promise<Response> {
     };
   }
 }
+
+export function normalizeToWww(url: string): string {
+  if (!url) {
+    return "";
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    const hostname = parsedUrl.hostname;
+    const hostParts = hostname.split(".");
+    if (hostParts.length === 2) {
+      parsedUrl.hostname = "www." + hostname;
+      return parsedUrl.toString();
+    } else {
+      return url;
+    }
+  } catch (e: any) {
+    console.error(`Failed to parse URL '${url}':`, e);
+    return url;
+  }
+}

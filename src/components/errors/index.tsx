@@ -1,6 +1,7 @@
 "use client";
 import { InternalErrorIcon, NotFoundIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -24,11 +25,17 @@ const ERROR_MAP = {
 export default function ErrorComponent({
   statusCode,
   reset,
-}: ErrorComponentProps) {
+  className,
+}: ErrorComponentProps & React.HTMLAttributes<HTMLDivElement>) {
   const router = useRouter();
   const Icon = statusCode === 404 ? NotFoundIcon : InternalErrorIcon;
   return (
-    <div className="relative flex min-h-svh w-full flex-col justify-center bg-background p-6 md:p-10">
+    <div
+      className={cn(
+        "relative flex min-h-svh w-full flex-col justify-center bg-background p-6 md:p-10",
+        className
+      )}
+    >
       <div className="relative mx-auto w-full max-w-5xl">
         <Icon className="absolute inset-0 h-[50vh] w-full text-foreground opacity-[0.04] dark:opacity-[0.03]" />
         <div className="relative z-[1] pt-52 text-center">
