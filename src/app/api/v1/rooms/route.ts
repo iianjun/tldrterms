@@ -1,7 +1,7 @@
 import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
-import { normalizeToWww } from "@/utils/website";
+import { normalizeUrl } from "@/utils/website";
 import { NextRequest } from "next/server";
 
 export async function GET() {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       status: 400,
     });
   }
-  const newUrl = normalizeToWww(url);
+  const newUrl = normalizeUrl(url);
   const supabase = await createClient();
   const { userId, isInvalid } = await getAuthentication();
   if (isInvalid) {

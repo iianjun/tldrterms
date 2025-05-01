@@ -343,7 +343,7 @@ The JSON object MUST contain ONLY the following keys at the top level:
   * This MUST be an array of objects.
   * Each object in the array represents a scored criterion from the main analysis (Categories 1-8).
   * For each object:
-      * \`category\`: A short string identifier for the category, using ONLY the IDs specified in parentheses in the 'SCORING MATRIX PHILOSOPHY & KEY AREAS' section above (e.g., 'clarity', 'ugc', 'liability').
+      * \`category\`: A short string identifier for the category, using ONLY the IDs specified in parentheses in the 'SCORING MATRIX PHILOSOPHY & KEY AREAS' section above (e.g., 'pp_clarity', 'collection', 'usage').
       * \`case_id\`: The numeric identifier (e.g., 1.1, 3.2, 7.1) corresponding to the Criterion number from the scoring matrix section. This **MUST be a number** (e.g., 1.1, 3.2, 7.1).
       * \`score\`: The integer score assigned (-2, -1, 0, 1, or 2). If no relevant text was found for this case_id, the score MUST be 0.
       * \`description\`: A string containing the justification. If relevant text *was* found (\`text_found\` is \`true\`), this MUST include the specific quote supporting the score. If no relevant text was found (\`text_found\` is \`false\`), this MUST be the exact phrase "No specific text found in the analyzed section corresponding to this criterion.".
@@ -488,19 +488,26 @@ export async function GET(
           console.error(`analyticPointError`, analyticPointError);
           throw new Error("Error analyzing the content.");
         }
-        await supabase
+        const { data: room } = await supabase
           .from("analytic_rooms")
           .update({
             analytic_status: "completed",
           })
-          .eq("id", Number(roomId));
-
+          .eq("id", Number(roomId))
+          .select("*")
+          .single();
+        if (!room) {
+          throw new Error("Room not found");
+        }
         send({
           success: true,
           data: {
             status: "done",
-            ...analytic,
-            analytic_points: analytic_points,
+            analytic: {
+              ...analytic,
+              analytic_points: analytic_points,
+            },
+            room,
           },
         });
       } catch (e) {

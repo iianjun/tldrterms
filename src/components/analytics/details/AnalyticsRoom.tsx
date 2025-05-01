@@ -4,15 +4,16 @@ import InitialAnimation from "@/components/analytics/details/InitialAnimation";
 import { useSSE } from "@/hooks/useSSE";
 import { getAnalyticsRoomById } from "@/services/analytics";
 import { ApiResponse } from "@/types/api";
-import { SSEStatus } from "@/types/openai";
-import { Analytic } from "@/types/supabase";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { SSEResponse, SSEStatus } from "@/types/openai";
+import { Analytic, AnalyticRoom } from "@/types/supabase";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 interface Props {
   roomId: string;
 }
 export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
+  const queryClient = useQueryClient();
   const { data: room } = useSuspenseQuery({
     queryKey: ["rooms", roomId],
     queryFn: () => getAnalyticsRoomById({ roomId }),
@@ -33,12 +34,10 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
     room?.error_msg ?? null
   );
 
-  const { data, close } = useSSE<ApiResponse<{ status: SSEStatus } & Analytic>>(
-    {
-      url: `/api/v1/analytics/${room?.id}/stream`,
-      enabled: room?.analytic_status === "idle",
-    }
-  );
+  const { data, close } = useSSE<ApiResponse<SSEResponse>>({
+    url: `/api/v1/analytics/${room?.id}/stream`,
+    enabled: room?.analytic_status === "idle",
+  });
 
   useEffect(() => {
     if (!data) return;
@@ -49,15 +48,33 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
       setErrorMsg(error || "An error occurred");
       close();
     } else {
-      const { status, ...analytic } = result;
+      const { status, analytic, room } = result;
       setStatus(status);
-      setAnalytic(analytic);
       setErrorMsg(null);
-      if (status === "done") {
-        close();
+      if (status === "done") close();
+      if (analytic) setAnalytic(analytic);
+      if (room) {
+        queryClient.setQueryData(
+          ["rooms"],
+          (oldData: ApiResponse<AnalyticRoom[]>) => ({
+            ...oldData,
+            data: [room, ...(oldData.data || [])],
+          })
+        );
+        queryClient.setQueryData(
+          ["rooms", room.id.toString()],
+          (oldData: ApiResponse<AnalyticRoom>) => ({
+            ...oldData,
+            data: {
+              ...oldData.data,
+              analytic_status: room.analytic_status,
+              error_msg: room.error_msg,
+            },
+          })
+        );
       }
     }
-  }, [data, close]);
+  }, [data, close, queryClient]);
 
   if (status !== "done" || !analytic) {
     return (

@@ -28,7 +28,7 @@ export default function AnalyzeForm() {
   } = useForm<FormData>({
     resolver: zodResolver(urlSchema),
     defaultValues: {
-      url: "https://hellohealthgroup.com/terms-of-service/",
+      url: "",
     },
   });
   return (

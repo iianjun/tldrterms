@@ -78,21 +78,23 @@ export async function getWebsiteTextUndici(url: string): Promise<Response> {
   }
 }
 
-export function normalizeToWww(url: string): string {
-  if (!url) {
-    return "";
-  }
+export function normalizeUrl(url: string): string {
+  if (!url) return "";
+  let normalized = url.trim();
 
+  if (/^http:\/\//i.test(normalized)) {
+    normalized = normalized.replace(/^http:\/\//i, "https://");
+  } else if (!/^https?:\/\//i.test(normalized)) {
+    normalized = "https://" + normalized;
+  }
   try {
-    const parsedUrl = new URL(url);
-    const hostname = parsedUrl.hostname;
-    const hostParts = hostname.split(".");
+    const parsedUrl = new URL(normalized);
+    const hostParts = parsedUrl.hostname.split(".");
     if (hostParts.length === 2) {
-      parsedUrl.hostname = "www." + hostname;
-      return parsedUrl.toString();
-    } else {
-      return url;
+      parsedUrl.hostname = "www." + parsedUrl.hostname;
     }
+
+    return parsedUrl.toString();
   } catch (e: any) {
     console.error(`Failed to parse URL '${url}':`, e);
     return url;

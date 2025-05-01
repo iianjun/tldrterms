@@ -12,7 +12,7 @@ export default async function Page({
   const queryClient = getQueryClient();
   try {
     await Promise.all([
-      queryClient.prefetchQuery({
+      queryClient.fetchQuery({
         queryKey: ["rooms", roomId],
         queryFn: () => getAnalyticsRoomById({ roomId }),
       }),
@@ -22,6 +22,7 @@ export default async function Page({
       }),
     ]);
   } catch (error: any) {
+    console.error(error);
     const status = error?.response?.status ?? error?.status;
     if (status === 404) return notFound();
     throw error;

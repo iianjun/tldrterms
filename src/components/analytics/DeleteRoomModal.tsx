@@ -32,15 +32,12 @@ function DeleteRoomModal({ open, onOpenChange, room: selectedRoom }: Props) {
       onOpenChange(false);
       queryClient.setQueryData(
         ["rooms"],
-        (oldData: ApiResponse<AnalyticRoom[]>) => {
-          const ret = {
-            ...oldData,
-            data: oldData.data?.filter(
-              (oldRoom) => oldRoom.id !== selectedRoom?.id
-            ),
-          };
-          return ret;
-        }
+        (oldData: ApiResponse<AnalyticRoom[]>) => ({
+          ...oldData,
+          data: oldData.data?.filter(
+            (oldRoom) => oldRoom.id !== selectedRoom?.id
+          ),
+        })
       );
       if (Number(currentRoomId) === selectedRoom?.id) {
         router.push("/analytics");

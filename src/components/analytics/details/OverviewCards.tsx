@@ -30,8 +30,8 @@ function OverviewCards({ analytic }: { analytic: Analytic }) {
                 {
                   "text-orange-500": analytic.score >= 50,
                   "text-yellow-500": analytic.score >= 60,
-                  "text-grenn-400": analytic.score >= 70,
-                  "text-grenn-500": analytic.score >= 80,
+                  "text-green-400": analytic.score >= 70,
+                  "text-green-500": analytic.score >= 80,
                 }
               )}
             >

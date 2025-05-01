@@ -1,4 +1,10 @@
-import { AnalyticPoint, DocumentType, ScoreCategory } from "@/types/supabase";
+import {
+  Analytic,
+  AnalyticPoint,
+  AnalyticRoom,
+  DocumentType,
+  ScoreCategory,
+} from "@/types/supabase";
 
 export interface OpenAIAnalayzedResponse {
   score: number;
@@ -19,6 +25,12 @@ export interface AnalysisResultRes<T> {
   isSuccess: boolean;
   message: string;
   result?: T;
+}
+
+export interface SSEResponse {
+  status: SSEStatus;
+  analytic: Analytic;
+  room: AnalyticRoom;
 }
 
 export type SSEStatus = "fetching" | "analyzing" | "done" | "error";
