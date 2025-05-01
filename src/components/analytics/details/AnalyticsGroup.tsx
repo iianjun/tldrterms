@@ -1,4 +1,4 @@
-import AnalyticPointCard from "@/components/analytics/AnalyticPointCard";
+import AnalyticsPointCard from "@/components/analytics/details/AnalyticsPointCard";
 import { useCategoryStore } from "@/providers/CategoryStoreProvider";
 import { AnalyticPoint } from "@/types/supabase";
 import { useMemo } from "react";
@@ -9,7 +9,7 @@ interface Props {
   className?: string;
 }
 
-function AnalyticGroup({ className, title, points }: Props) {
+function AnalyticsGroup({ className, title, points }: Props) {
   const categories = useCategoryStore((state) => state.categories);
   const titleMap: Record<number, string> | null = useMemo(() => {
     const category = categories.find(
@@ -32,7 +32,7 @@ function AnalyticGroup({ className, title, points }: Props) {
       </div>
       <div className="space-y-4">
         {points.map((point) => (
-          <AnalyticPointCard
+          <AnalyticsPointCard
             key={point.id}
             point={point}
             title={titleMap?.[point.case_id] ?? ""}
@@ -43,4 +43,4 @@ function AnalyticGroup({ className, title, points }: Props) {
   );
 }
 
-export default AnalyticGroup;
+export default AnalyticsGroup;

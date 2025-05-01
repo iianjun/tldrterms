@@ -1,4 +1,4 @@
-import AnalyticRoom from "@/components/analytics/AnalyticRoom";
+import AnalyticsRoom from "@/components/analytics/details/AnalyticsRoom";
 import { CategoryStoreProvider } from "@/providers/CategoryStoreProvider";
 import { getAnalyticsRoomById } from "@/services/analytics";
 import { getCategories } from "@/services/categories";
@@ -24,7 +24,7 @@ export default async function Page({
   if (!room || roomError || !categories || categoryError) return notFound();
   return (
     <CategoryStoreProvider categories={categories}>
-      <AnalyticRoom room={room} />
+      <AnalyticsRoom room={room} />
     </CategoryStoreProvider>
   );
 }

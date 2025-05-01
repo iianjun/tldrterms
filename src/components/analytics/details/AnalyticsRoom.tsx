@@ -1,6 +1,6 @@
 "use client";
-import AnalyticsResult from "@/components/analytics/AnalyticsResult";
-import InitialAnimation from "@/components/analytics/InitialAnimation";
+import AnalyticsResult from "@/components/analytics/details/AnalyticsResult";
+import InitialAnimation from "@/components/analytics/details/InitialAnimation";
 import { useSSE } from "@/hooks/useSSE";
 import { ApiResponse } from "@/types/api";
 import { SSEStatus } from "@/types/openai";
@@ -11,7 +11,7 @@ interface Props {
   room: AnalyticRoomType;
 }
 
-export default function AnalyticRoom({ room }: Readonly<Props>) {
+export default function AnalyticsRoom({ room }: Readonly<Props>) {
   const [analytic, setAnalytic] = useState<Analytic | null>(
     room.analytics ?? null
   );

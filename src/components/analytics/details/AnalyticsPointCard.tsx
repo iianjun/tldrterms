@@ -32,7 +32,7 @@ const SOURCE_MAP = {
     label: "Concerning (Major)",
   },
 };
-function AnalyticPointCard({
+function AnalyticsPointCard({
   point,
   title,
 }: { point: AnalyticPoint; title: string }) {
@@ -90,4 +90,4 @@ function AnalyticPointCard({
   );
 }
 
-export default AnalyticPointCard;
+export default AnalyticsPointCard;
