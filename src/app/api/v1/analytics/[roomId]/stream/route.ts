@@ -213,7 +213,8 @@ The JSON object MUST contain ONLY the following keys at the top level:
     * **IF** the result of the China data check (which populates \`china_data_processing_details\`) is **NOT null**: The summary MUST focus exclusively on reporting this China-related finding. **Examples:** "The terms indicate user data may be stored in or processed by entities located in China." **OR** "The terms indicate user data may be shared with third-party companies based in China."
     * **ELSE IF** the result of the China data check is **null**: The summary MUST provide a concise (2-4 sentence) user-centric overview of the main Terms & Conditions analysis (based on the 'points' array). Highlight major pros (e.g., criterion with score +2) and cons (e.g., criterion with score -2, high number of negative points, significant low coverage indicated by many 'text_found: false' entries).
 3. \`china_data_processing_details\`:
-  * IF the **provided T&C text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** briefly explaining the finding (e.g., "Text mentions data transfer to or processing by entities in China.").
+  * IF the **provided T&C text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** that **must begin with** the phrase \`"The terms state that "\` and explicitly indicate **where** the reference appears (e.g., a section number, heading, or paragraph).  
+    *Example:* *The terms state that user data may be processed and stored in China, and may be subject to access by Chinese authorities without notice. **Section 8.3** mentions that the company partners with Chinese entities for data processing and storage.*
   * OTHERWISE (if no such mention is found), set this field to \`null\`.
 4. \`points\`:
   * This MUST be an array of objects.
@@ -262,12 +263,12 @@ Second, after performing the main scoring analysis, specifically scan the entire
 1.  You **MUST** evaluate and provide an entry in the 'points' array for **EVERY** case_id listed in the SCORING MATRIX below (from 1.1 to 8.1). Do **NOT** invent new case_id values or omit any listed case_id.
 2.  For each case_id, assign a Score from -2 to +2 based on relevant text found. Use the scale:
     * \`+2\`: Very Positive / Protective for User Privacy & Control
-    * \`+1\`: Generally Positive / Fair / Clear regarding User Data
-    * \`0\`: Neutral / Standard Practice / Ambiguous but not necessarily negative
-    * \`-1\`: Potentially Problematic / Vague / Slightly Unfair regarding User Data
+    * \`+1\`: Solid, **specific** protection but missing one or two best-practice elements
+    * \`0\`: Mentions the issue but remains **generic** or only partially covers it
+    * \`-1\`: Vague, weak, or burdensome; lacks essential detail
     * \`-2\`: Clearly Disadvantageous / Unfair / Invasive / Restrictive for User Privacy
-3.  **If the provided Privacy Policy text does not contain relevant information to score a specific criterion (case_id):** You **MUST** still include its entry in the 'points' array. In such cases:
-    * Assign \`score: 0\`.
+3.  **If the provided Privacy Policy text does not contain relevant information to score a specific criterion (case_id):**
+    * Assign \`score: -1\` (lack of transparency is a negative).
     * Use the **exact phrase** "No specific text found in the analyzed section corresponding to this criterion." for the \`description\`.
     * Set the new \`text_found\` field to \`false\`.
 4.  **If relevant text IS found:**
@@ -304,6 +305,9 @@ Second, after performing the main scoring analysis, specifically scan the entire
 * **Category 8: Children's Privacy (category ID: 'children')**
     * *Criterion 8.1:* Handling of Children's Data (+2 clear compliance/not collected, -2 non-compliant collection)
 
+### Penalty for omission
+If a criterion scores -1 solely because the text is missing, set
+"description" to "No specific text found …" and \`text_found\` to false.
 
 # OUTPUT FORMAT:
 Provide your final response as a single, valid JSON object adhering EXACTLY to the following structure. Output ONLY the JSON object and nothing else.
@@ -337,7 +341,8 @@ The JSON object MUST contain ONLY the following keys at the top level:
     * **IF** the result of the China data check (which populates \`china_data_processing_details\`) is **NOT null**: The summary MUST focus exclusively on reporting this China-related finding. **Examples:** "The privacy Policy indicates user data may be stored in or processed by entities located in China." **OR** "The privacy policy indicates user data may be shared with third-party companies based in China."
     * **ELSE IF** the result of the China data check is **null**: The summary MUST provide a concise (2-4 sentence) user-centric overview of the main Privacy Policy analysis (based on the 'points' array). Highlight major pros (e.g., criterion with score +2) and cons (e.g., criterion with score -2, high number of negative points, significant low coverage indicated by many 'text_found: false' entries).
 3. \`china_data_processing_details\`:
-  * IF the **provided Privacy Policy text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** briefly explaining the finding (e.g., "Text mentions data transfer to or processing by entities in China.").
+  * IF the **provided Privacy Policy text** mentions data storage/processing/sharing involving China or Chinese entities, set this field to a **string** that **must begin with** the phrase \`"The privacy policy states that "\` and explicitly indicate **where** the reference appears (e.g., a section number, heading, or paragraph).  
+    *Example:* *The privacy policy states that user data may be processed and stored in China, and may be subject to access by Chinese authorities without notice. **Section 8.3** mentions that the company partners with Chinese entities for data processing and storage.*
   * OTHERWISE (if no such mention is found), set this field to \`null\`.
 4. \`points\`:
   * This MUST be an array of objects.

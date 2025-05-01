@@ -19,7 +19,7 @@ function OverviewCards({ analytic }: { analytic: Analytic }) {
       <Card>
         <CardHeader className="gap-0 pb-2">
           <CardTitle variant="h2" className="text-lg">
-            Percentage Score
+            Overall Score
           </CardTitle>
         </CardHeader>
         <CardContent>
