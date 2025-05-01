@@ -3,6 +3,7 @@ import ProtectedHeader from "@/components/layout/header/ProtectedHeader";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/server";
 import { UserStoreProvider } from "@/providers/UserStoreProvider";
+import { getRooms } from "@/services/analytics";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
@@ -13,10 +14,11 @@ export default async function ProtectedLayout({
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   if (!data.user || error) return redirect("/login");
+  const { data: rooms } = await getRooms();
   return (
     <UserStoreProvider user={data.user}>
       <SidebarProvider className="overflow-clip">
-        <AppSidebar />
+        <AppSidebar rooms={rooms || []} />
         <div className="flex flex-1 flex-col">
           <ProtectedHeader />
           <main className="flex-1 px-2 md:px-4">{children}</main>

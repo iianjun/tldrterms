@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DOCUMENT_TYPE_TITLE_MAP } from "@/constants/document";
 import { cn } from "@/lib/utils";
 import { useCategoryStore } from "@/providers/CategoryStoreProvider";
 import {
@@ -15,11 +16,6 @@ import {
   AnalyticPointCategory,
 } from "@/types/supabase";
 import { useMemo } from "react";
-
-const TITLE_MAP = {
-  terms: "Terms & Conditions",
-  privacy: "Privacy Policy",
-};
 
 function AnalysisBreakdown({ analytic }: { analytic: Analytic }) {
   const categories = useCategoryStore((state) => state.categories);
@@ -62,10 +58,8 @@ function AnalysisBreakdown({ analytic }: { analytic: Analytic }) {
         </CardTitle>
         <CardDescription>
           Detailed analysis of the{" "}
-          {TITLE_MAP[
-            analytic.document_type as keyof typeof TITLE_MAP
-          ].toLowerCase()}{" "}
-          by category
+          {DOCUMENT_TYPE_TITLE_MAP[analytic.document_type].toLowerCase()} by
+          category
         </CardDescription>
       </CardHeader>
       <CardContent>

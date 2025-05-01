@@ -71,3 +71,33 @@ export async function GET(
     });
   }
 }
+
+export async function DELETE(
+  _: NextRequest,
+  { params }: { params: Promise<{ roomId: string }> }
+) {
+  const { roomId } = await params;
+  const supabase = await createClient();
+  const { userId, isInvalid } = await getAuthentication();
+  if (isInvalid) {
+    return CustomResponse.error({
+      message: "Unauthorized",
+      status: 401,
+    });
+  }
+  const { error } = await supabase
+    .from("analytic_rooms")
+    .delete()
+    .eq("id", Number(roomId))
+    .eq("user_id", userId);
+  if (error) {
+    console.error(error);
+    return CustomResponse.error({
+      message: "Error deleting room",
+      status: 500,
+    });
+  }
+  return CustomResponse.success({
+    data: true,
+  });
+}
