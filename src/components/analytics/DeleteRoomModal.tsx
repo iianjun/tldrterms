@@ -10,8 +10,9 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { deleteRoom } from "@/services/analytics";
+import { ApiResponse } from "@/types/api";
 import { AnalyticRoom } from "@/types/supabase";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 interface Props {
@@ -19,19 +20,33 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   room?: AnalyticRoom | null;
 }
-function DeleteRoomModal({ open, onOpenChange, room }: Props) {
+function DeleteRoomModal({ open, onOpenChange, room: selectedRoom }: Props) {
+  const params = useParams();
+  const currentRoomId = params.roomId;
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (roomId: number) => deleteRoom({ roomId }),
     onSuccess: () => {
       onOpenChange(false);
-      if (Number(roomId) === room?.id) {
+      queryClient.setQueryData(
+        ["rooms"],
+        (oldData: ApiResponse<AnalyticRoom[]>) => {
+          const ret = {
+            ...oldData,
+            data: oldData.data?.filter(
+              (oldRoom) => oldRoom.id !== selectedRoom?.id
+            ),
+          };
+          return ret;
+        }
+      );
+      if (Number(currentRoomId) === selectedRoom?.id) {
         router.push("/analytics");
       }
     },
   });
-  const params = useParams();
-  const roomId = params.roomId;
-  const router = useRouter();
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -39,7 +54,8 @@ function DeleteRoomModal({ open, onOpenChange, room }: Props) {
         <AlertDialogHeader>
           <AlertDialogTitle>Delete terms?</AlertDialogTitle>
           <p>
-            This will delete <strong>{room?.title ?? room?.url}</strong> terms.
+            This will delete{" "}
+            <strong>{selectedRoom?.title ?? selectedRoom?.url}</strong> terms.
           </p>
           <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your
@@ -51,8 +67,8 @@ function DeleteRoomModal({ open, onOpenChange, room }: Props) {
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
-              if (!room?.id) return;
-              mutate(room.id);
+              if (!selectedRoom?.id) return;
+              mutate(selectedRoom.id);
             }}
             variant="destructive"
           >

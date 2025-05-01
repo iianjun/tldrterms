@@ -47,7 +47,6 @@ export default function AppSidebar() {
   const grouped = useMemo(() => {
     return groupBy(rooms, (room) => room.created_at.split("T")[0]);
   }, [rooms]);
-
   return (
     <>
       <Sidebar>
@@ -58,40 +57,42 @@ export default function AppSidebar() {
               <SidebarGroupLabel>{date}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {rooms.map((room) => (
-                    <SidebarMenuItem key={room.id}>
-                      <SidebarMenuButton
-                        className={cn({
-                          "bg-sidebar-focused": String(room.id) === roomId,
-                        })}
-                        asChild
-                      >
-                        <Link href={`/analytics/${room.id}`}>
-                          <span>{room.title ?? room.url}</span>
-                        </Link>
-                      </SidebarMenuButton>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <SidebarMenuAction showOnHover>
-                            <MoreHorizontalIcon />
-                          </SidebarMenuAction>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          side="right"
-                          align="start"
-                          className="w-56"
+                  {rooms.map((room) => {
+                    return (
+                      <SidebarMenuItem key={room.id}>
+                        <SidebarMenuButton
+                          className={cn({
+                            "bg-sidebar-focused": String(room.id) === roomId,
+                          })}
+                          asChild
                         >
-                          <DropdownMenuItem
-                            variant="destructive"
-                            onClick={() => setDeleteId(room.id)}
+                          <Link href={`/analytics/${room.id}`}>
+                            <span>{room.title ?? room.url}</span>
+                          </Link>
+                        </SidebarMenuButton>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <SidebarMenuAction showOnHover>
+                              <MoreHorizontalIcon />
+                            </SidebarMenuAction>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent
+                            side="right"
+                            align="start"
+                            className="w-56"
                           >
-                            <TrashIcon size={16} strokeWidth={2} />
-                            Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </SidebarMenuItem>
-                  ))}
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={() => setDeleteId(room.id)}
+                            >
+                              <TrashIcon size={16} strokeWidth={2} />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </SidebarMenuItem>
+                    );
+                  })}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
