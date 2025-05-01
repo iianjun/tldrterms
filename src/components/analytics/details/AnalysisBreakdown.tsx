@@ -8,8 +8,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DOCUMENT_TYPE_TITLE_MAP } from "@/constants/document";
+import { useCategories } from "@/hooks/use-catetgories";
 import { cn } from "@/lib/utils";
-import { useCategoryStore } from "@/providers/CategoryStoreProvider";
 import {
   Analytic,
   AnalyticPoint,
@@ -18,7 +18,7 @@ import {
 import { useMemo } from "react";
 
 function AnalysisBreakdown({ analytic }: { analytic: Analytic }) {
-  const categories = useCategoryStore((state) => state.categories);
+  const categories = useCategories();
   const grouped: Map<AnalyticPointCategory, AnalyticPoint[]> = useMemo(() => {
     if (!analytic.analytic_points) return new Map();
     const groups = new Map<AnalyticPointCategory, AnalyticPoint[]>();

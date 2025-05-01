@@ -1,30 +1,34 @@
 import AnalyticsRoom from "@/components/analytics/details/AnalyticsRoom";
-import { CategoryStoreProvider } from "@/providers/CategoryStoreProvider";
+import { getQueryClient } from "@/lib/query-client";
 import { getAnalyticsRoomById } from "@/services/analytics";
 import { getCategories } from "@/services/categories";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 
 export default async function Page({
   params,
 }: { params: Promise<{ roomId: string }> }) {
   const { roomId } = await params;
-  let roomResult, categoriesResult;
+  const queryClient = getQueryClient();
   try {
-    [roomResult, categoriesResult] = await Promise.all([
-      getAnalyticsRoomById({ roomId }),
-      getCategories(),
+    await Promise.all([
+      queryClient.prefetchQuery({
+        queryKey: ["rooms", roomId],
+        queryFn: () => getAnalyticsRoomById({ roomId }),
+      }),
+      queryClient.prefetchQuery({
+        queryKey: ["categories"],
+        queryFn: getCategories,
+      }),
     ]);
   } catch (error: any) {
     const status = error?.response?.status ?? error?.status;
     if (status === 404) return notFound();
     throw error;
   }
-  const { data: room, error: roomError } = roomResult;
-  const { data: categories, error: categoryError } = categoriesResult;
-  if (!room || roomError || !categories || categoryError) return notFound();
   return (
-    <CategoryStoreProvider categories={categories}>
-      <AnalyticsRoom room={room} />
-    </CategoryStoreProvider>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <AnalyticsRoom roomId={roomId} />
+    </HydrationBoundary>
   );
 }

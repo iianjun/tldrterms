@@ -20,14 +20,21 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
-import { AnalyticRoom } from "@/types/supabase";
+import { getRooms } from "@/services/analytics";
+import { useQuery } from "@tanstack/react-query";
 import { groupBy } from "lodash";
 import { MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
-export default function AppSidebar({ rooms }: { rooms: AnalyticRoom[] }) {
+export default function AppSidebar() {
+  const { data } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: getRooms,
+  });
+  const rooms = data?.data || [];
+
   const params = useParams();
   const roomId = params.roomId;
 

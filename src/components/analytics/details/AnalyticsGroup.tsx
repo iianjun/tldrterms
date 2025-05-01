@@ -1,5 +1,5 @@
 import AnalyticsPointCard from "@/components/analytics/details/AnalyticsPointCard";
-import { useCategoryStore } from "@/providers/CategoryStoreProvider";
+import { useCategories } from "@/hooks/use-catetgories";
 import { AnalyticPoint } from "@/types/supabase";
 import { useMemo } from "react";
 
@@ -10,7 +10,7 @@ interface Props {
 }
 
 function AnalyticsGroup({ className, title, points }: Props) {
-  const categories = useCategoryStore((state) => state.categories);
+  const categories = useCategories();
   const titleMap: Record<number, string> | null = useMemo(() => {
     const category = categories.find(
       (c) => c.category_id === points[0].category
