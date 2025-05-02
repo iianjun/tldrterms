@@ -1,82 +1,5 @@
 import { convertHtmlToText } from "@/utils/html-to-text";
-import puppeteer from "puppeteer";
-import { request } from "undici";
-
-type Response = {
-  isSuccess: boolean;
-  result?: string;
-};
-export async function getWebsiteTextWithPuppeteer(
-  url: string
-): Promise<Response> {
-  try {
-    const browser = await puppeteer.launch({
-      headless: true, // correct for Puppeteer 24.6.1
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-    try {
-      const page = await browser.newPage();
-      await page.goto(url, {
-        waitUntil: "networkidle0",
-        timeout: 30000,
-      });
-
-      const html = await page.evaluate(() => document.body.innerHTML);
-      const text = convertHtmlToText(html);
-
-      return {
-        isSuccess: true,
-        result: text,
-      };
-    } catch (e) {
-      console.error(e);
-      return {
-        isSuccess: false,
-      };
-    } finally {
-      await browser.close();
-    }
-  } catch (e) {
-    console.error("Puppeteer error:", e);
-    return {
-      isSuccess: false,
-    };
-  }
-}
-
-export async function getWebsiteTextUndici(url: string): Promise<Response> {
-  try {
-    const { body, statusCode } = await request(url, {
-      method: "GET",
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        Accept:
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9",
-        Connection: "keep-alive",
-      },
-    });
-
-    if (statusCode !== 200) {
-      return {
-        isSuccess: false,
-      };
-    }
-
-    const html = await body.text();
-    const text = convertHtmlToText(html);
-    return {
-      isSuccess: true,
-      result: text,
-    };
-  } catch (e) {
-    console.error("Undici error:", e);
-    return {
-      isSuccess: false,
-    };
-  }
-}
+import { chromium } from "playwright";
 
 export function normalizeUrl(url: string): string {
   if (!url) return "";
@@ -99,4 +22,33 @@ export function normalizeUrl(url: string): string {
     console.error(`Failed to parse URL '${url}':`, e);
     return url;
   }
+}
+
+export async function extractTextFromUrl(url: string): Promise<string> {
+  const browser = await chromium.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+  // Create a context with realistic browser fingerprint
+  const context = await browser.newContext({
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.5790.171 Safari/537.36",
+    locale: "en-US",
+    viewport: { width: 1280, height: 800 },
+  });
+  const page = await context.newPage();
+  // Emulate typical headers
+  await page.setExtraHTTPHeaders({
+    "Accept-Language": "en-US,en;q=0.9",
+  });
+  await page.goto(url);
+
+  // Pause for 10 seconds, to see what's going on.
+  await page.waitForTimeout(3000);
+  const html = await page.content();
+  const text = convertHtmlToText(html);
+
+  // Turn off the browser to clean up after ourselves.
+  await browser.close();
+  return text;
 }

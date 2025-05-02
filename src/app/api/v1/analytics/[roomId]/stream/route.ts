@@ -7,10 +7,7 @@ import {
   OpenAIValidationResponse,
 } from "@/types/openai";
 import { calculateScore } from "@/utils/calculate-score";
-import {
-  getWebsiteTextUndici,
-  getWebsiteTextWithPuppeteer,
-} from "@/utils/website";
+import { extractTextFromUrl } from "@/utils/website";
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
@@ -19,18 +16,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 //Extract text from the website
 async function performFetching(url: string) {
   try {
-    let text = "";
-    const { isSuccess, result } = await getWebsiteTextUndici(url);
-    if (isSuccess && result) {
-      text = result;
-    }
-    if (!isSuccess) {
-      console.info("Retrying with puppeteer...");
-      const res = await getWebsiteTextWithPuppeteer(url);
-      if (res.isSuccess && res.result) {
-        text = res.result;
-      }
-    }
+    const text = await extractTextFromUrl(url);
     if (!text) {
       return {
         isSuccess: false,
