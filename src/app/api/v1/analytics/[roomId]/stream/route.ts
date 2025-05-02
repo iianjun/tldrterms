@@ -262,11 +262,15 @@ Second, after performing the main scoring analysis, specifically scan the entire
 **CRITICAL Instructions for Evaluation:**
 1.  You **MUST** evaluate and provide an entry in the 'points' array for **EVERY** case_id listed in the SCORING MATRIX below (from 1.1 to 8.1). Do **NOT** invent new case_id values or omit any listed case_id.
 2.  For each case_id, assign a Score from -2 to +2 based on relevant text found. Use the scale:
-    * \`+2\`: Very Positive / Protective for User Privacy & Control
-    * \`+1\`: Solid, **specific** protection but missing one or two best-practice elements
-    * \`0\`: Mentions the issue but remains **generic** or only partially covers it
-    * \`-1\`: Vague, weak, or burdensome; lacks essential detail
-    * \`-2\`: Clearly Disadvantageous / Unfair / Invasive / Restrictive for User Privacy
+    * \`+2\`: Comprehensive and highly-specific; exhaustive list of data items **with purposes** & strong safeguards.
+    * \`+1\`: Clear, concrete list of several (≥ 3) data categories **and** why they’re collected; not quite exhaustive.
+    * \`0\`: Generic mention only (e.g. “We collect personal information”) or “may include” statements with no details.
+    * \`-1\`: Mention is ambiguous, conflicting, or potentially misleading (e.g. lists only one example, hides purpose).
+    * \`-2\`: Criterion missing **or** policy explicitly adopts practices harmful to user privacy.
+    **Important:**  
+    *Generic language without specifics → \`0\`.  
+    Ambiguous / conflicting language → \`-1\`.*
+
 3.  **If the provided Privacy Policy text does not contain relevant information to score a specific criterion (case_id):**
     * Assign \`score: -1\` (lack of transparency is a negative).
     * Use the **exact phrase** "No specific text found in the analyzed section corresponding to this criterion." for the \`description\`.
@@ -401,7 +405,6 @@ export async function GET(
       status: 400,
     });
   }
-
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {

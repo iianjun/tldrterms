@@ -43,6 +43,7 @@ export default function AnalyzeForm() {
           className="relative mb-4 flex w-full max-w-[36rem] md:mb-0"
         >
           <Input
+            autoFocus
             className={"h-auto py-3 pe-12"}
             type="url"
             error={Boolean(errors.url && touchedFields.url)}
