@@ -15,7 +15,7 @@ const SCORE_CATEGORY_MAP: Record<ScoreCategory, string> = {
 
 function OverviewCards({ analytic }: { analytic: Analytic }) {
   return (
-    <div className="mb-8 grid gap-6 sm:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-3">
       <Card>
         <CardHeader className="gap-0 pb-2">
           <CardTitle variant="h2" className="text-lg">
@@ -25,19 +25,23 @@ function OverviewCards({ analytic }: { analytic: Analytic }) {
         <CardContent>
           <div className="flex flex-col items-center justify-center">
             <div
-              className={cn(
-                `mb-2 font-bold text-4xl text-red-500 sm:text-5xl`,
-                {
-                  "text-orange-500": analytic.score >= 50,
-                  "text-yellow-500": analytic.score >= 60,
-                  "text-green-400": analytic.score >= 70,
-                  "text-green-500": analytic.score >= 80,
-                }
-              )}
+              className={cn(`mb-2 font-bold text-4xl sm:text-5xl`, {
+                "text-orange-500": analytic.score >= 50,
+                "text-yellow-500": analytic.score >= 60,
+                "text-green-400": analytic.score >= 70,
+                "text-green-500": analytic.score >= 80,
+                "text-red-500":
+                  analytic.score > 0 || analytic.china_data_processing_details,
+              })}
             >
-              {analytic.score}/100
+              {analytic.china_data_processing_details ? 0 : analytic.score}/100
             </div>
-            <Progress value={analytic.score} className="h-2 w-full" />
+            <Progress
+              value={
+                analytic.china_data_processing_details ? 0 : analytic.score
+              }
+              className="h-2 w-full"
+            />
           </div>
         </CardContent>
       </Card>
@@ -61,14 +65,21 @@ function OverviewCards({ analytic }: { analytic: Analytic }) {
                   "bg-orange-500":
                     analytic.score_category === "concerning_major",
                   "bg-red-500":
-                    analytic.score_category === "potentially_harmful",
+                    analytic.score_category === "potentially_harmful" ||
+                    !!analytic.china_data_processing_details,
                   "bg-purple-500":
                     analytic.score_category === "incomplete_potentially_risky",
                 }
               )}
             >
               <span className="text-lg sm:text-xl">
-                {SCORE_CATEGORY_MAP[analytic.score_category]}
+                {
+                  SCORE_CATEGORY_MAP[
+                    analytic.china_data_processing_details
+                      ? "potentially_harmful"
+                      : analytic.score_category
+                  ]
+                }
               </span>
             </div>
             <p className="mt-1 text-center text-muted-foreground text-xs">

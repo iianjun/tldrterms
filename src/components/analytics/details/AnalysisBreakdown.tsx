@@ -15,6 +15,7 @@ import {
   AnalyticPoint,
   AnalyticPointCategory,
 } from "@/types/supabase";
+import { ShieldIcon } from "lucide-react";
 import { useMemo } from "react";
 
 function AnalysisBreakdown({ analytic }: { analytic: Analytic }) {
@@ -63,6 +64,31 @@ function AnalysisBreakdown({ analytic }: { analytic: Analytic }) {
         </CardDescription>
       </CardHeader>
       <CardContent>
+        {analytic.china_data_processing_details && (
+          <div className="mb-8 p-4 border border-red-300 rounded-lg bg-red-50 dark:bg-red-950/30 dark:border-red-900">
+            <div className="flex items-start gap-3">
+              <div className="mt-1">
+                <ShieldIcon className="h-6 w-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-red-700 dark:text-red-400">
+                  Data Processing in China
+                </h3>
+                <p className="mt-2 text-sm">
+                  {analytic.china_data_processing_details}
+                </p>
+                <div className="mt-3 p-3 bg-red-100 dark:bg-red-900/30 rounded border border-red-200 dark:border-red-800">
+                  <p className="text-sm font-medium">
+                    Why this matters: Data processed or stored in China may be
+                    subject to access by Chinese authorities without notice or
+                    user consent. This can compromise your privacy and security
+                    regardless of other protections in the terms.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div className="space-y-8">
           {Array.from(grouped.entries()).map(([category, points], index) => (
             <AnalyticsGroup

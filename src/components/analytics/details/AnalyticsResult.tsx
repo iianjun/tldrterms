@@ -14,10 +14,7 @@ interface Props {
 function AnalyticsResult({ analytic, url }: Readonly<Props>) {
   return (
     <div className="mx-auto flex max-w-5xl flex-1 flex-col gap-4 px-2 py-8 md:gap-8 md:px-0">
-      <AnalyticsHeader
-        documentType={analytic.document_type as "terms" | "privacy"}
-        url={url}
-      />
+      <AnalyticsHeader analytic={analytic} url={url} />
       <OverviewCards analytic={analytic} />
       <AnalysisBreakdown analytic={analytic} />
       <div className="flex justify-center">
