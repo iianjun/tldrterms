@@ -18,12 +18,24 @@ async function performFetching(url: string) {
   try {
     const text = await extractTextFromUrl(url);
     if (!text) {
-      return {
-        isSuccess: false,
-        message:
-          "We couldn't load the content from given URL. Please check the URL and try again.",
-      };
+      throw new Error("Error while fetching the website content.");
     }
+    return {
+      isSuccess: true,
+      message: "success",
+      result: { text },
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      isSuccess: false,
+      message: "Error while fetching the website content.",
+    };
+  }
+}
+
+export async function performValidation(text: string) {
+  try {
     //Language/content detection
     const validation = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -67,14 +79,16 @@ async function performFetching(url: string) {
     return {
       isSuccess: true,
       message: "success",
-      result: { text, document_type },
+      result: { document_type },
     };
   } catch (e) {
     console.error(e);
-    return { isSuccess: false, message: "Error fetching the website content." };
+    return {
+      isSuccess: false,
+      message: "Error while fetching the website content.",
+    };
   }
 }
-
 //common
 async function getChatResponse({
   text,
@@ -374,7 +388,7 @@ export async function GET(
   }
   const { data: roomData } = await supabase
     .from("analytic_rooms")
-    .select("url")
+    .select("url, manual_text")
     .eq("id", Number(roomId))
     .eq("user_id", userId)
     .single();
@@ -384,8 +398,8 @@ export async function GET(
       status: 404,
     });
   }
-  const { url } = roomData;
-  if (!url) {
+  const { url, manual_text } = roomData;
+  if (!url && !manual_text) {
     return CustomResponse.error({
       message: "Missing URL",
       status: 400,
@@ -408,21 +422,27 @@ export async function GET(
       try {
         console.info(`Start fetching for ${url}...`);
         send({ success: true, data: { status: "fetching" } });
-        const fetchingResult = await performFetching(url);
-        if (!fetchingResult.isSuccess || !fetchingResult.result)
-          throw new Error(fetchingResult.message);
+        let text;
+        if (!manual_text) {
+          const fetchingResult = await performFetching(url);
+          if (!fetchingResult.isSuccess || !fetchingResult.result)
+            throw new Error("Error while fetching the website content.");
+          text = fetchingResult.result.text;
+        } else {
+          text = manual_text;
+        }
 
         console.info(`Start analyzing for ${url}...`);
         send({ success: true, data: { status: "analyzing" } });
+        const validationResult = await performValidation(text);
+        if (!validationResult.isSuccess || !validationResult.result)
+          throw new Error(validationResult.message);
+
         let analysisResult;
-        if (fetchingResult.result.document_type === "terms") {
-          analysisResult = await performTermsAnalyzing(
-            fetchingResult.result.text
-          );
+        if (validationResult.result.document_type === "terms") {
+          analysisResult = await performTermsAnalyzing(text);
         } else {
-          analysisResult = await performPrivacyAnalyzing(
-            fetchingResult.result.text
-          );
+          analysisResult = await performPrivacyAnalyzing(text);
         }
         if (
           !analysisResult ||
@@ -452,7 +472,7 @@ export async function GET(
             score,
             score_category,
             summary,
-            document_type: fetchingResult.result.document_type,
+            document_type: validationResult.result.document_type,
             user_id: userId,
             room_id: Number(roomId),
             china_data_processing_details,

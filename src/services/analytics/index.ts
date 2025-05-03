@@ -10,6 +10,16 @@ export function getAnalyticsRoomById(data: { roomId: string }): Promise<
   });
 }
 
+export function updateRoom(data: { roomId: number; text: string }): Promise<
+  ApiResponse<AnalyticRoom>
+> {
+  return apiClient(`/analytics/${data.roomId}`, {
+    method: "PATCH",
+    body: {
+      text: data.text,
+    },
+  });
+}
 export function deleteRoom(data: { roomId: number }): Promise<
   ApiResponse<void>
 > {

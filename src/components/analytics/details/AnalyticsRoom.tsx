@@ -1,5 +1,6 @@
 "use client";
 import AnalyticsResult from "@/components/analytics/details/AnalyticsResult";
+import FetchError from "@/components/analytics/details/FetchError";
 import InitialAnimation from "@/components/analytics/details/InitialAnimation";
 import { useSSE } from "@/hooks/useSSE";
 import { getAnalyticsRoomById } from "@/services/analytics";
@@ -77,9 +78,14 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
   }, [data, close, queryClient]);
 
   if (status !== "done" || !analytic) {
+    if (
+      status === "error" &&
+      errorMsg === "Error while fetching the website content."
+    )
+      return <FetchError errorMsg={errorMsg} />;
     return (
       <InitialAnimation
-        status={status as Exclude<SSEStatus, "done">}
+        status={status as Exclude<SSEStatus, "done" | "error">}
         errorMsg={errorMsg}
       />
     );

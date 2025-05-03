@@ -72,6 +72,50 @@ export async function GET(
   }
 }
 
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ roomId: string }> }
+) {
+  try {
+    const { roomId } = await params;
+    const { text } = await req.json();
+    const supabase = await createClient();
+    const { userId, isInvalid } = await getAuthentication();
+    if (isInvalid) {
+      return CustomResponse.error({
+        message: "Unauthorized",
+        status: 401,
+      });
+    }
+    const { data, error } = await supabase
+      .from("analytic_rooms")
+      .update({
+        manual_text: text,
+        analytic_status: "idle",
+      })
+      .eq("id", Number(roomId))
+      .eq("user_id", userId)
+      .select("*")
+      .single();
+    if (!data || error) {
+      console.error(error);
+      return CustomResponse.error({
+        message: "Error updating room",
+        status: 500,
+      });
+    }
+    return CustomResponse.success({
+      data,
+    });
+  } catch (e) {
+    console.error(e);
+    return CustomResponse.error({
+      message: "Internal Server Error",
+      status: 500,
+    });
+  }
+}
+
 export async function DELETE(
   _: NextRequest,
   { params }: { params: Promise<{ roomId: string }> }

@@ -53,6 +53,7 @@ export type Database = {
           created_at: string;
           error_msg: string | null;
           id: number;
+          manual_text: string | null;
           title: string | null;
           url: string;
           user_id: string;
@@ -62,6 +63,7 @@ export type Database = {
           created_at?: string;
           error_msg?: string | null;
           id?: number;
+          manual_text?: string | null;
           title?: string | null;
           url: string;
           user_id: string;
@@ -71,6 +73,7 @@ export type Database = {
           created_at?: string;
           error_msg?: string | null;
           id?: number;
+          manual_text?: string | null;
           title?: string | null;
           url?: string;
           user_id?: string;

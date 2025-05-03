@@ -71,16 +71,6 @@
         "noUnsafeNegation": "off",
         "useGetterReturn": "off",
         "useNamespaceKeyword": "error"
-      },
-      "nursery": {
-        "useSortedClasses": {
-          "level": "warn",
-          "fix": "safe",
-          "options": {
-            "attributes": ["className"],
-            "functions": ["cn"]
-          }
-        }
       }
     }
   },
