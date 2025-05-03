@@ -25,14 +25,16 @@ function OverviewCards({ analytic }: { analytic: Analytic }) {
         <CardContent>
           <div className="flex flex-col items-center justify-center">
             <div
-              className={cn(`mb-2 font-bold text-4xl sm:text-5xl`, {
-                "text-orange-500": analytic.score >= 50,
-                "text-yellow-500": analytic.score >= 60,
-                "text-green-400": analytic.score >= 70,
-                "text-green-500": analytic.score >= 80,
-                "text-red-500":
-                  analytic.score > 0 || analytic.china_data_processing_details,
-              })}
+              className={cn(
+                `mb-2 font-bold text-4xl text-red-500 sm:text-5xl`,
+                {
+                  "text-orange-500": analytic.score >= 50,
+                  "text-yellow-500": analytic.score >= 60,
+                  "text-green-400": analytic.score >= 70,
+                  "text-green-500": analytic.score >= 80,
+                  "text-red-500": analytic.china_data_processing_details,
+                }
+              )}
             >
               {analytic.china_data_processing_details ? 0 : analytic.score}/100
             </div>

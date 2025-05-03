@@ -59,7 +59,10 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
           ["rooms"],
           (oldData: ApiResponse<AnalyticRoom[]>) => ({
             ...oldData,
-            data: [room, ...(oldData.data || [])],
+            data: [
+              room,
+              ...(oldData.data || []).filter((r) => r.id !== room.id),
+            ],
           })
         );
         queryClient.setQueryData(
@@ -76,17 +79,11 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
       }
     }
   }, [data, close, queryClient]);
-
+  if (status === "error") return <FetchError errorMsg={errorMsg} />;
   if (status !== "done" || !analytic) {
-    if (
-      status === "error" &&
-      errorMsg === "Error while fetching the website content."
-    )
-      return <FetchError errorMsg={errorMsg} />;
     return (
       <InitialAnimation
         status={status as Exclude<SSEStatus, "done" | "error">}
-        errorMsg={errorMsg}
       />
     );
   }
