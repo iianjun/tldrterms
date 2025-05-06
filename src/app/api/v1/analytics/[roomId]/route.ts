@@ -14,7 +14,7 @@ export async function GET(
     const { userId, isInvalid } = await getAuthentication();
     if (isInvalid) {
       return CustomResponse.error({
-        message: "Unauthorized",
+        errorCode: "UNAUTHORIZED",
         status: 401,
       });
     }
@@ -49,7 +49,7 @@ export async function GET(
     if (!roomData || roomError) {
       console.error(roomError);
       return CustomResponse.error({
-        message: "Room not found",
+        errorCode: "ROOM_NOT_FOUND",
         status: 404,
       });
     }
@@ -66,7 +66,7 @@ export async function GET(
   } catch (e) {
     console.error(e);
     return CustomResponse.error({
-      message: "Internal Server Error",
+      errorCode: "INTERNAL_SERVER_ERROR",
       status: 500,
     });
   }
@@ -83,7 +83,7 @@ export async function PATCH(
     const { userId, isInvalid } = await getAuthentication();
     if (isInvalid) {
       return CustomResponse.error({
-        message: "Unauthorized",
+        errorCode: "UNAUTHORIZED",
         status: 401,
       });
     }
@@ -100,7 +100,7 @@ export async function PATCH(
     if (!data || error) {
       console.error(error);
       return CustomResponse.error({
-        message: "Error updating room",
+        errorCode: "UPDATE_ROOM_ERROR",
         status: 500,
       });
     }
@@ -110,7 +110,7 @@ export async function PATCH(
   } catch (e) {
     console.error(e);
     return CustomResponse.error({
-      message: "Internal Server Error",
+      errorCode: "INTERNAL_SERVER_ERROR",
       status: 500,
     });
   }
@@ -125,7 +125,7 @@ export async function DELETE(
   const { userId, isInvalid } = await getAuthentication();
   if (isInvalid) {
     return CustomResponse.error({
-      message: "Unauthorized",
+      errorCode: "UNAUTHORIZED",
       status: 401,
     });
   }
@@ -137,7 +137,7 @@ export async function DELETE(
   if (error) {
     console.error(error);
     return CustomResponse.error({
-      message: "Error deleting room",
+      errorCode: "DELETE_ROOM_ERROR",
       status: 500,
     });
   }

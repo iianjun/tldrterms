@@ -2,11 +2,18 @@
 import ProfileDropdown from "@/components/layout/header/ProfileDropdown";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/ui/sidebar";
+import { getCredits } from "@/services/credits";
+import { useQuery } from "@tanstack/react-query";
 import { AlignLeftIcon, PanelLeftIcon, SquarePenIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function ProtectedHeader() {
   const { state, toggleSidebar, isMobile } = useSidebar();
+  const { data } = useQuery({
+    queryKey: ["credits"],
+    queryFn: getCredits,
+  });
+  const credits = data?.data || { free: 0, paid: 0 };
   return (
     <header
       className={
@@ -35,7 +42,7 @@ export default function ProtectedHeader() {
           <Link href="/analytics">TL;DR Terms</Link>
         </Button>
       </div>
-      <ProfileDropdown />
+      <ProfileDropdown freeCredits={credits.free} />
     </header>
   );
 }

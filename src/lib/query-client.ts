@@ -11,7 +11,12 @@ function makeQueryClient() {
       },
       mutations: {
         onError({ response }: IFetchError<ApiResponse>) {
-          toast.error(response?._data?.error || "Something went wrong.");
+          const errorCode = response?._data?.errorCode;
+          if (errorCode === "NO_CREDIT") {
+            toast.error("Your monthly credit limit has been reached.");
+          } else {
+            toast.error(response?._data?.error || "Something went wrong.");
+          }
         },
       },
     },

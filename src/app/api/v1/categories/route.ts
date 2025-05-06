@@ -8,7 +8,7 @@ export async function GET() {
     const { isInvalid } = await getAuthentication();
     if (isInvalid) {
       return CustomResponse.error({
-        message: "Unauthorized",
+        errorCode: "UNAUTHORIZED",
         status: 401,
       });
     }
@@ -25,11 +25,11 @@ export async function GET() {
           )
         `)
       .order("id", { ascending: true });
-    if (error) {
-      console.error(error.message);
+    if (!data || !data.length) {
+      console.error(error?.message);
       return CustomResponse.error({
-        message: error.message,
-        status: 400,
+        errorCode: "CATEGORY_NOT_FOUND",
+        status: 404,
       });
     }
     return CustomResponse.success({
@@ -38,7 +38,7 @@ export async function GET() {
   } catch (e) {
     console.error(e);
     return CustomResponse.error({
-      message: "Internal Server Error",
+      errorCode: "INTERNAL_SERVER_ERROR",
       status: 500,
     });
   }

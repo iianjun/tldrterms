@@ -485,7 +485,7 @@ export async function GET(
   const { userId, isInvalid } = await getAuthentication();
   if (isInvalid) {
     return CustomResponse.error({
-      message: "Unauthorized",
+      errorCode: "UNAUTHORIZED",
       status: 401,
     });
   }
@@ -497,14 +497,14 @@ export async function GET(
     .single();
   if (!roomData) {
     return CustomResponse.error({
-      message: "Room not found",
+      errorCode: "ROOM_NOT_FOUND",
       status: 404,
     });
   }
   const { url, manual_text } = roomData;
   if (!url && !manual_text) {
     return CustomResponse.error({
-      message: "Missing URL",
+      errorCode: "URL_BAD_REQUEST",
       status: 400,
     });
   }
