@@ -1,4 +1,4 @@
-import type { ApiResponse, ErrorCode } from "@/types/api";
+import type { ApiResponse, ErrorCode, Pagination } from "@/types/api";
 import { NextResponse } from "next/server";
 
 const MESSAGE_SOURCE_MAP: Record<ErrorCode, string> = {
@@ -18,6 +18,22 @@ export class CustomResponse {
     const body: ApiResponse<T> = {
       success: true,
       data,
+    };
+    return NextResponse.json(body, { status });
+  }
+  static pagination<T>({
+    data,
+    pagination,
+    status = 200,
+  }: {
+    data: T;
+    pagination: Pagination<T>["pagination"];
+    status?: number;
+  }) {
+    const body: Pagination<T> = {
+      success: true,
+      data,
+      pagination,
     };
     return NextResponse.json(body, { status });
   }

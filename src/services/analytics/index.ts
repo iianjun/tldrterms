@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse, Pagination } from "@/types/api";
 import { AnalyticRoom } from "@/types/supabase";
 
 export function getAnalyticsRoomById(data: { roomId: string }): Promise<
@@ -37,8 +37,11 @@ export function createRoom(data: { url: string }): Promise<
   });
 }
 
-export function getRooms(): Promise<ApiResponse<AnalyticRoom[]>> {
-  return apiClient("/rooms", {
+export function getRooms({
+  offset,
+  limit,
+}: { offset: number; limit: number }): Promise<Pagination<AnalyticRoom[]>> {
+  return apiClient(`/rooms?offset=${offset}&limit=${limit}`, {
     method: "GET",
   });
 }

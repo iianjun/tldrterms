@@ -333,7 +333,11 @@ function SidebarInput({
   );
 }
 
-function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
+function SidebarHeader({
+  className,
+  onOpenSearch,
+  ...props
+}: React.ComponentProps<"div"> & { onOpenSearch?: () => void }) {
   return (
     <div
       data-slot="sidebar-header"
@@ -346,7 +350,7 @@ function SidebarHeader({ className, ...props }: React.ComponentProps<"div">) {
     >
       <SidebarTrigger />
       <div className="flex">
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" onClick={onOpenSearch}>
           <SearchIcon className="size-6" />
         </Button>
         <Button asChild variant="ghost" size="icon">

@@ -16,3 +16,12 @@ export interface ApiResponse<T = unknown> {
   errorCode?: ErrorCode;
   statusCode?: number;
 }
+
+export interface Pagination<T = unknown> extends ApiResponse<T> {
+  pagination: {
+    offset: number;
+    limit: number;
+    total: number;
+    hasNext: boolean;
+  };
+}

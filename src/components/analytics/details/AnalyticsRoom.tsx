@@ -7,7 +7,7 @@ import { getAnalyticsRoomById } from "@/services/analytics";
 import { ApiResponse } from "@/types/api";
 import { SSEResponse, SSEStatus } from "@/types/openai";
 import { Analytic, AnalyticRoom } from "@/types/supabase";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -15,7 +15,7 @@ interface Props {
 }
 export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
   const queryClient = useQueryClient();
-  const { data: room } = useSuspenseQuery({
+  const { data: room } = useQuery({
     queryKey: ["rooms", roomId],
     queryFn: () => getAnalyticsRoomById({ roomId }),
     select: (res) => {
@@ -24,7 +24,7 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
     },
   });
   const [analytic, setAnalytic] = useState<Analytic | null>(
-    room.analytics ?? null
+    room?.analytics ?? null
   );
   const [status, setStatus] = useState<SSEStatus>(() => {
     if (room?.analytic_status === "error") return "error";

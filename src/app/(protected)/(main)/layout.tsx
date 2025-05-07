@@ -13,9 +13,11 @@ export default async function MainLayout({
 }>) {
   const queryClient = getQueryClient();
   await Promise.all([
-    queryClient.prefetchQuery({
+    queryClient.prefetchInfiniteQuery({
       queryKey: ["rooms"],
-      queryFn: getRooms,
+      queryFn: ({ pageParam = 0 }) =>
+        getRooms({ offset: pageParam, limit: 10 }),
+      initialPageParam: 0,
     }),
     queryClient.prefetchQuery({
       queryKey: ["credits"],
