@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DOCUMENT_TYPE_TITLE_MAP } from "@/constants/document";
-import { useCategories } from "@/hooks/use-catetgories";
+import { useCategories } from "@/hooks/useCatetgories";
 import { cn } from "@/lib/utils";
 import {
   Analytic,

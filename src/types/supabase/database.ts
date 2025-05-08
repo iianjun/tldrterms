@@ -171,6 +171,27 @@ export type Database = {
           },
         ];
       };
+      usage_logs: {
+        Row: {
+          created_at: string;
+          id: number;
+          is_paid: boolean | null;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          is_paid?: boolean | null;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          is_paid?: boolean | null;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       [_ in never]: never;

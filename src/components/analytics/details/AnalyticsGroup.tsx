@@ -1,5 +1,5 @@
 import AnalyticsPointCard from "@/components/analytics/details/AnalyticsPointCard";
-import { useCategories } from "@/hooks/use-catetgories";
+import { useCategories } from "@/hooks/useCatetgories";
 import { AnalyticPoint } from "@/types/supabase";
 import { useMemo } from "react";
 

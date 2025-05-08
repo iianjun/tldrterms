@@ -10,9 +10,13 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { deleteRoom } from "@/services/analytics";
-import { ApiResponse } from "@/types/api";
+import { Pagination } from "@/types/api";
 import { AnalyticRoom } from "@/types/supabase";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 interface Props {
@@ -32,12 +36,34 @@ function DeleteRoomModal({ open, onOpenChange, room: selectedRoom }: Props) {
       onOpenChange(false);
       queryClient.setQueryData(
         ["rooms"],
-        (oldData: ApiResponse<AnalyticRoom[]>) => ({
-          ...oldData,
-          data: oldData.data?.filter(
-            (oldRoom) => oldRoom.id !== selectedRoom?.id
-          ),
-        })
+        (oldData: InfiniteData<Pagination<AnalyticRoom[]>>) => {
+          if (!oldData) {
+            return { pages: [], pageParams: [] };
+          }
+          const allPages = oldData.pages
+            .flatMap((page) => page.data || [])
+            .filter((room) => room.id !== selectedRoom?.id);
+          const limit = oldData.pages[0].pagination.limit;
+          const ret: Pagination<AnalyticRoom[]>[] = [];
+          const total = allPages.length - 1;
+          for (let i = 0; i < Math.ceil(allPages.length / limit); i++) {
+            const offset = i * limit;
+            ret.push({
+              ...oldData.pages[i],
+              data: allPages.slice(offset, offset + limit),
+              pagination: {
+                offset,
+                limit,
+                total,
+                hasNext: offset + 1 < Math.ceil((total || 0) / limit),
+              },
+            });
+          }
+          return {
+            ...oldData,
+            pages: ret,
+          };
+        }
       );
       if (Number(currentRoomId) === selectedRoom?.id) {
         router.push("/analytics");
