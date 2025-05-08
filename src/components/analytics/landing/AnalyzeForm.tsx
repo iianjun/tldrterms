@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { TextShimmer } from "@/components/ui/text-shimmer";
 import { createRoom } from "@/services/analytics";
+import { ApiResponse } from "@/types/api";
 import { urlSchema } from "@/validations/url";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ArrowUpIcon, Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -14,10 +15,23 @@ import { z } from "zod";
 type FormData = z.infer<typeof urlSchema>;
 export default function AnalyzeForm() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (url: string) => createRoom({ url }),
     onSuccess: ({ data }) => {
       if (!data) return;
+      queryClient.setQueryData(
+        ["credits"],
+        (oldData: ApiResponse<{ free: number }>) => {
+          if (!oldData.data) return oldData;
+          return {
+            ...oldData,
+            data: {
+              free: oldData.data.free - 1,
+            },
+          };
+        }
+      );
       router.push(`/analytics/${data}`);
     },
   });
