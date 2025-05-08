@@ -13,6 +13,7 @@ import { AnalyticRoom } from "@/types/supabase";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { groupBy } from "lodash";
 import { Loader2Icon } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 export default function SearchModal({
@@ -84,8 +85,15 @@ export default function SearchModal({
         {grouped.map(([date, rooms]) => (
           <CommandGroup key={date} heading={date} forceMount>
             {rooms.map((room) => (
-              <CommandItem key={room.id} value={room.id.toString()}>
-                <span>{room.title ?? room.url}</span>
+              <CommandItem
+                key={room.id}
+                value={room.id.toString()}
+                onSelect={() => onOpenChange(false)}
+                asChild
+              >
+                <Link href={`/analytics/${room.id}`}>
+                  <span>{room.title ?? room.url}</span>
+                </Link>
               </CommandItem>
             ))}
           </CommandGroup>
