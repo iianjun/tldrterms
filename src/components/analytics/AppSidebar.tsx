@@ -34,7 +34,7 @@ export default function AppSidebar() {
     useInfiniteQuery({
       queryKey: ["rooms"],
       queryFn: ({ pageParam = 0 }) =>
-        getRooms({ offset: pageParam, limit: 10 }),
+        getRooms({ offset: pageParam, limit: 30 }),
       getNextPageParam: (lastPage) =>
         lastPage.pagination.hasNext
           ? lastPage.pagination.offset + 1

@@ -18,22 +18,28 @@ export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const offset = Number(searchParams.get("offset") || "0");
   const limit = Number(searchParams.get("limit") || "10");
+  const search = (searchParams.get("search") || "").trim();
   const guardedOffset = Number.isNaN(offset) || offset < 0 ? 0 : offset;
   const guardedLimit = Number.isNaN(limit) || limit < 1 ? 10 : limit;
   const from = guardedOffset * guardedLimit;
   const to = from + guardedLimit - 1;
-  const { data, count } = await supabase
+
+  let baseQuery = supabase
     .from("analytic_rooms")
     .select(
       `
-      id,
-      url,
-      title,
-      created_at
-      `,
+    id,
+    url,
+    title,
+    created_at
+    `,
       { count: "exact" }
     )
-    .eq("user_id", userId)
+    .eq("user_id", userId);
+  if (search) {
+    baseQuery = baseQuery.or(`title.ilike.%${search}%,url.ilike.%${search}%`);
+  }
+  const { data, count } = await baseQuery
     .order("created_at", { ascending: false })
     .range(from, to);
 

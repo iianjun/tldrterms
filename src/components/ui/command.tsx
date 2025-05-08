@@ -21,7 +21,7 @@ function Command({
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        "bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md",
+        "bg-popover text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-md max-h-[440px] min-h-[440px]",
         className
       )}
       {...props}
@@ -82,10 +82,7 @@ function CommandList({
   return (
     <CommandPrimitive.List
       data-slot="command-list"
-      className={cn(
-        "max-h-[300px] scroll-py-1 overflow-x-hidden overflow-y-auto",
-        className
-      )}
+      className={cn("scroll-py-1 overflow-x-hidden overflow-y-auto", className)}
       {...props}
     />
   );
@@ -115,6 +112,7 @@ function CommandGroup({
         className
       )}
       {...props}
+      hidden={false}
     />
   );
 }

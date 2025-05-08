@@ -1,6 +1,7 @@
 import { apiClient } from "@/lib/api";
 import { ApiResponse, Pagination } from "@/types/api";
 import { AnalyticRoom } from "@/types/supabase";
+import { getQueryString } from "@/utils/query-string";
 
 export function getAnalyticsRoomById(data: { roomId: string }): Promise<
   ApiResponse<AnalyticRoom>
@@ -40,8 +41,16 @@ export function createRoom(data: { url: string }): Promise<
 export function getRooms({
   offset,
   limit,
-}: { offset: number; limit: number }): Promise<Pagination<AnalyticRoom[]>> {
-  return apiClient(`/rooms?offset=${offset}&limit=${limit}`, {
+  search = "",
+}: { offset: number; limit: number; search?: string }): Promise<
+  Pagination<AnalyticRoom[]>
+> {
+  const qs = getQueryString({
+    offset: String(offset),
+    limit: String(limit),
+    search,
+  });
+  return apiClient(`/rooms?${qs}`, {
     method: "GET",
   });
 }

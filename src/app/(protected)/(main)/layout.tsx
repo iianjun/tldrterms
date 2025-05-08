@@ -16,7 +16,7 @@ export default async function MainLayout({
     queryClient.prefetchInfiniteQuery({
       queryKey: ["rooms"],
       queryFn: ({ pageParam = 0 }) =>
-        getRooms({ offset: pageParam, limit: 10 }),
+        getRooms({ offset: pageParam, limit: 30 }),
       initialPageParam: 0,
     }),
     queryClient.prefetchQuery({
