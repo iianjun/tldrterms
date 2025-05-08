@@ -1,6 +1,6 @@
 import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
-import { getCounts, spendCredit } from "@/lib/supabase/credit";
+import { getRemainingCounts, spendCredit } from "@/lib/supabase/credit";
 import { createClient } from "@/lib/supabase/server";
 import { normalizeUrl } from "@/utils/website";
 import { NextRequest } from "next/server";
@@ -21,8 +21,6 @@ export async function GET(request: NextRequest) {
   const search = (searchParams.get("search") || "").trim();
   const guardedOffset = Number.isNaN(offset) || offset < 0 ? 0 : offset;
   const guardedLimit = Number.isNaN(limit) || limit < 1 ? 10 : limit;
-  const from = guardedOffset * guardedLimit;
-  const to = from + guardedLimit - 1;
 
   let baseQuery = supabase
     .from("analytic_rooms")
@@ -41,7 +39,7 @@ export async function GET(request: NextRequest) {
   }
   const { data, count } = await baseQuery
     .order("created_at", { ascending: false })
-    .range(from, to);
+    .range(guardedOffset, guardedOffset + guardedLimit - 1);
 
   return CustomResponse.pagination({
     data: data || [],
@@ -72,9 +70,9 @@ export async function POST(req: NextRequest) {
     });
   }
 
-  const { free } = await getCounts({ userId });
+  const { free } = await getRemainingCounts({ userId });
   // If free credits are all used and no paid credits
-  if (free >= 10) {
+  if (free <= 0) {
     return CustomResponse.error({
       errorCode: "NO_CREDIT",
       status: 402,

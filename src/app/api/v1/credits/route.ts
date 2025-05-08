@@ -1,6 +1,6 @@
 import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
-import { getCounts } from "@/lib/supabase/credit";
+import { getRemainingCounts } from "@/lib/supabase/credit";
 
 export async function GET() {
   const { userId, isInvalid } = await getAuthentication();
@@ -10,7 +10,7 @@ export async function GET() {
       status: 401,
     });
   }
-  const { free } = await getCounts({ userId });
+  const { free } = await getRemainingCounts({ userId });
   return CustomResponse.success({
     data: {
       free,

@@ -15,6 +15,7 @@ import { groupBy } from "lodash";
 import { Loader2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 
+const LIMIT = 10;
 export default function SearchModal({
   open,
   onOpenChange,
@@ -28,7 +29,11 @@ export default function SearchModal({
     useInfiniteQuery({
       queryKey: ["rooms", debouncedSearch],
       queryFn: ({ pageParam = 0 }) =>
-        getRooms({ offset: pageParam, limit: 10, search: debouncedSearch }),
+        getRooms({
+          offset: pageParam * LIMIT,
+          limit: LIMIT,
+          search: debouncedSearch,
+        }),
       getNextPageParam: (lastPage) =>
         lastPage.pagination.hasNext
           ? lastPage.pagination.offset + 1

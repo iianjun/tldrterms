@@ -29,12 +29,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
+const LIMIT = 30;
 export default function AppSidebar() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
       queryKey: ["rooms"],
       queryFn: ({ pageParam = 0 }) =>
-        getRooms({ offset: pageParam, limit: 30 }),
+        getRooms({ offset: pageParam * LIMIT, limit: LIMIT }),
       getNextPageParam: (lastPage) =>
         lastPage.pagination.hasNext
           ? lastPage.pagination.offset + 1
@@ -50,7 +51,6 @@ export default function AppSidebar() {
   }, [data]);
   const params = useParams();
   const roomId = params.roomId;
-
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [openSearch, setOpenSearch] = useState(false);
 

@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import dayjs from "dayjs";
 
-export async function getCounts({ userId }: { userId: string }) {
+export async function getRemainingCounts({ userId }: { userId: string }) {
   const supabase = await createClient();
   const startOfMonth = dayjs().startOf("month").toISOString();
   const { count: freeCount } = await supabase
