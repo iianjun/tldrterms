@@ -24,9 +24,30 @@ const SOURCE_MAP = {
       text: "Sign In Now",
     },
   },
+  "/forgot-password": {
+    title: "Reset Your Password",
+    subtitle:
+      "Enter your email address and we'll send you a link to reset your password.",
+    footer: {
+      link: "/login",
+      title: "Already have an account?",
+      text: "Sign In",
+    },
+  },
+
+  "/reset-password": {
+    title: "Reset Your Password",
+    subtitle:
+      "Enter in a new secure password and press save to update your password",
+    footer: {
+      link: "/login",
+      title: "Already have an account?",
+      text: "Sign In",
+    },
+  },
 };
 
-type Pathname = "/login" | "/signup";
+type Pathname = "/login" | "/signup" | "/forgot-password" | "/reset-password";
 
 export default function AuthLayout({
   children,
@@ -45,13 +66,17 @@ export default function AuthLayout({
         </h2>
       </div>
       <div className="flex flex-col gap-5">
-        <OAuthButton provider="google" />
-        <OAuthButton provider="github" />
-        <div className="flex items-center">
-          <Separator className="flex-1" />
-          <span className="px-2 text-muted-foreground text-sm">or</span>
-          <Separator className="flex-1" />
-        </div>
+        {!["/forgot-password", "/reset-password"].includes(pathname) && (
+          <>
+            <OAuthButton provider="google" />
+            <OAuthButton provider="github" />
+            <div className="flex items-center">
+              <Separator className="flex-1" />
+              <span className="px-2 text-muted-foreground text-sm">or</span>
+              <Separator className="flex-1" />
+            </div>
+          </>
+        )}
         {children}
       </div>
       <div className="my-8 self-center text-foreground text-sm">

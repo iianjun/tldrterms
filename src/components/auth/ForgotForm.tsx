@@ -1,20 +1,19 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
-import { loginSchema } from "@/validations/auth";
+import { forgotPasswordSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-
-type FormData = z.infer<typeof loginSchema>;
-export default function LoginForm() {
+type FormData = z.infer<typeof forgotPasswordSchema>;
+export default function ForgotForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const {
@@ -22,25 +21,31 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   });
-
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={handleSubmit(async (credentials) => {
+      onSubmit={handleSubmit(async ({ email }) => {
         const supabase = createClient();
         try {
           setLoading(true);
-          const { error } = await supabase.auth.signInWithPassword(credentials);
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
+          });
           if (error) {
             return toast.error(error.message);
           }
-          router.push("/analytics");
+          toast.success(
+            "If you registered using your email and password, you will receive a password reset email. The password reset link expires in 10 minutes.",
+            {
+              position: "top-right",
+            }
+          );
+          router.push("/login");
         } catch {
           return toast.error("Something went wrong. Please try again later.");
         } finally {
@@ -60,29 +65,9 @@ export default function LoginForm() {
           <p className="text-destructive text-sm">{errors.email?.message}</p>
         )}
       </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex justify-between">
-          <Label htmlFor="password">Passowrd</Label>
-          <Button
-            className="p-0 h-fit text-muted-foreground"
-            variant="link"
-            asChild
-          >
-            <Link href="/forgot-password">Forgot Password?</Link>
-          </Button>
-        </div>
-        <Input
-          type="password"
-          placeholder="••••••••"
-          error={Boolean(errors.password)}
-          {...register("password")}
-        />
-        {errors.password && (
-          <p className="text-destructive text-sm">{errors.password?.message}</p>
-        )}
-      </div>
       <Button disabled={loading}>
-        {loading && <Loader2Icon className="animate-spin" />}Sign In
+        {loading && <Loader2Icon className="animate-spin" />}
+        Send Reset Email
       </Button>
     </form>
   );

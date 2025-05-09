@@ -3,18 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
-import { loginSchema } from "@/validations/auth";
+import { resetPasswordSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { ExternalToast, toast } from "sonner";
 import { z } from "zod";
-
-type FormData = z.infer<typeof loginSchema>;
-export default function LoginForm() {
+type FormData = z.infer<typeof resetPasswordSchema>;
+function ResetForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const {
@@ -22,24 +20,35 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      email: "",
       password: "",
     },
   });
-
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={handleSubmit(async (credentials) => {
+      onSubmit={handleSubmit(async ({ password }) => {
         const supabase = createClient();
         try {
+          const toastData: ExternalToast = {
+            position: "top-right",
+            id: "reset-password-toast",
+          };
           setLoading(true);
-          const { error } = await supabase.auth.signInWithPassword(credentials);
-          if (error) {
-            return toast.error(error.message);
+          toast.loading("Saving password...", toastData);
+          const { data, error } = await supabase.auth.updateUser({ password });
+          if (error || !data.user.email) {
+            return toast.error(
+              error?.message || "Something went wrong. Please try again later.",
+              toastData
+            );
           }
+          toast.success("Password saved successfully!", toastData);
+          await supabase.auth.signInWithPassword({
+            email: data.user.email,
+            password,
+          });
           router.push("/analytics");
         } catch {
           return toast.error("Something went wrong. Please try again later.");
@@ -49,28 +58,7 @@ export default function LoginForm() {
       })}
     >
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          placeholder="name@example.com"
-          type="email"
-          error={Boolean(errors.email)}
-          {...register("email")}
-        />
-        {errors.email && (
-          <p className="text-destructive text-sm">{errors.email?.message}</p>
-        )}
-      </div>
-      <div className="flex flex-col gap-2">
-        <div className="flex justify-between">
-          <Label htmlFor="password">Passowrd</Label>
-          <Button
-            className="p-0 h-fit text-muted-foreground"
-            variant="link"
-            asChild
-          >
-            <Link href="/forgot-password">Forgot Password?</Link>
-          </Button>
-        </div>
+        <Label htmlFor="password">Password</Label>
         <Input
           type="password"
           placeholder="••••••••"
@@ -82,8 +70,11 @@ export default function LoginForm() {
         )}
       </div>
       <Button disabled={loading}>
-        {loading && <Loader2Icon className="animate-spin" />}Sign In
+        {loading && <Loader2Icon className="animate-spin" />}
+        Save New Password
       </Button>
     </form>
   );
 }
+
+export default ResetForm;
