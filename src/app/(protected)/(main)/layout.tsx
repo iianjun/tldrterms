@@ -29,7 +29,7 @@ export default async function MainLayout({
       <SidebarProvider className="overflow-clip">
         <AppSidebar />
         <div className="flex flex-1 flex-col">
-          <ProtectedHeader />
+          <ProtectedHeader showSidebar />
           <main className="flex-1 px-2 md:px-4">{children}</main>
         </div>
       </SidebarProvider>

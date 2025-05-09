@@ -5,6 +5,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -13,8 +15,10 @@ import { usePluralize } from "@/hooks/usePluralize";
 import { createClient } from "@/lib/supabase/client";
 import { useUserStore } from "@/providers/UserStoreProvider";
 import dayjs from "dayjs";
-import { CircleUserRoundIcon, LogOutIcon } from "lucide-react";
+import { CircleUserRoundIcon, LogOutIcon, UserIcon } from "lucide-react";
+import { useTheme } from "next-themes";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -29,6 +33,8 @@ export default function ProfileDropdown({ freeCredits }: Props) {
     count: dayjs().add(1, "month").startOf("month").diff(dayjs(), "day"),
     inclusive: true,
   });
+  const { theme, setTheme } = useTheme();
+
   if (!user) return <></>;
 
   return (
@@ -83,7 +89,26 @@ export default function ProfileDropdown({ freeCredits }: Props) {
           </div>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
+        <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+          <DropdownMenuLabel>Theme</DropdownMenuLabel>
+          <DropdownMenuRadioItem value="dark">Dark</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="light">Light</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="system">System</DropdownMenuRadioItem>
+        </DropdownMenuRadioGroup>
+        <DropdownMenuSeparator />
         <DropdownMenuGroup>
+          <DropdownMenuItem className="cursor-pointer" asChild>
+            <Link href="/account">
+              <UserIcon
+                size={16}
+                strokeWidth={2}
+                className="opacity-60"
+                aria-hidden="true"
+              />
+
+              <span>Account</span>
+            </Link>
+          </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
             onClick={async () => {

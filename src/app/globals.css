@@ -148,3 +148,7 @@
 button {
   cursor: pointer;
 }
+
+* {
+  scrollbar-width: thin;
+}
