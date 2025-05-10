@@ -58,13 +58,13 @@ export default function ProfileInformation() {
         setLoading(false);
       })}
     >
-      <Card className="bg-muted">
-        <CardHeader className="border-b">
+      <Card className="bg-muted py-4">
+        <CardHeader className="border-b pb-4">
           <CardTitle variant="h2">Profile information</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-2 md:grid md:grid-cols-12 space-y-0">
-            <Label className="col-span-4" htmlFor="name">
+            <Label className="col-span-4 text-muted-foreground" htmlFor="name">
               Name
             </Label>
             <Input className="col-span-8" {...register("name")} />

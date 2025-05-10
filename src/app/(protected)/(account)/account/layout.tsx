@@ -17,7 +17,7 @@ export default async function Layout({
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <ProtectedHeader />
-      <main className="mx-auto max-w-6xl scroll-bar">
+      <main className="mx-auto max-w-5xl scroll-bar mt-7.5">
         <div className="bg-muted rounded-md ml-3 mr-3">
           <div className="pt-3 px-6 border-b border-b-background overflow-hidden">
             <h1 className="text-lg font-semibold leading-8 whitespace-nowrap">
