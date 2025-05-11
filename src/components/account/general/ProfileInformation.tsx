@@ -58,7 +58,7 @@ export default function ProfileInformation() {
         setLoading(false);
       })}
     >
-      <Card className="bg-muted py-4">
+      <Card className="bg-muted py-4 gap-4">
         <CardHeader className="border-b pb-4">
           <CardTitle variant="h2">Profile information</CardTitle>
         </CardHeader>

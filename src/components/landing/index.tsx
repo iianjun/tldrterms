@@ -15,7 +15,7 @@ export default function Landing() {
         animate={{ opacity: 1 }}
         transition={{ delay: 2.5, duration: 0.5 }}
       >
-        <h2 className="mb-4 font-bold text-3xl tracking-tight sm:text-4xl md:mb-6 md:text-5xl">
+        <h2 className="mb-4 font-bold text-2xl tracking-tight sm:text-4xl md:mb-6 md:text-5xl">
           Understand Website Terms {/*  */}
           <span className="mt-1 text-blue-500 sm:block">
             Without The Legal Jargon

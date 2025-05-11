@@ -1,4 +1,5 @@
 "use client";
+import AccountDeletion from "@/components/account/general/AccountDeletion";
 import Appearance from "@/components/account/general/Appearnace";
 import Credentials from "@/components/account/general/Credentials";
 import ProfileInformation from "@/components/account/general/ProfileInformation";
@@ -9,6 +10,7 @@ export default function GeneralTabContent() {
       <ProfileInformation />
       <Credentials />
       <Appearance />
+      <AccountDeletion />
     </div>
   );
 }

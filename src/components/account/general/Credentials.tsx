@@ -23,7 +23,7 @@ export default function AccountCredentials() {
   const user = useUserStore((state) => state.user);
   if (!user) return <></>;
   return (
-    <Card className="bg-muted py-4">
+    <Card className="bg-muted py-4 gap-4">
       <CardHeader className="border-b pb-4">
         <CardTitle variant="h2">Account credentials</CardTitle>
       </CardHeader>

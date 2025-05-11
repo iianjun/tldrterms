@@ -12,7 +12,7 @@ export default function Appearance() {
   const { theme, setTheme } = useTheme();
   const mounted = useMounted();
   return (
-    <Card className="bg-muted py-4">
+    <Card className="bg-muted py-4 gap-4">
       <CardHeader className="border-b pb-4">
         <CardTitle variant="h2">Appearance</CardTitle>
       </CardHeader>
