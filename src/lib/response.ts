@@ -1,25 +1,12 @@
-import type { ApiResponse, ErrorCode, Pagination } from "@/types/api";
+import type { ApiResponse, CommonErrorCode, Pagination } from "@/types/api";
 import { NextResponse } from "next/server";
 
-type MESSAGE_MAP_ERROR_CODE = Exclude<
-  ErrorCode,
-  "AUTH_ERROR" | "RESET_AUTH_ERROR" | "LOGOUT_ERROR"
->;
-const MESSAGE_SOURCE_MAP: Record<MESSAGE_MAP_ERROR_CODE, string> = {
+const MESSAGE_SOURCE_MAP: Record<CommonErrorCode, string> = {
   UNAUTHORIZED: "Unauthorized",
   NO_CREDIT: "No credits available",
   ROOM_NOT_FOUND: "Room not found",
   INTERNAL_SERVER_ERROR: "Internal Server Error",
-  UPDATE_ROOM_ERROR: "Error on updating room",
-  DELETE_ROOM_ERROR: "Error on deleting room",
-  URL_BAD_REQUEST: "URL is missing",
-  CATEGORY_NOT_FOUND: "Categories not found",
-  ROOM_CREATE_ERROR: "Error on creating room",
-  CREDIT_USAGE_ERROR: "Error on using credit",
   AUTH_BAD_REQUEST: "Email and password are required",
-  FORGOT_BAD_REQUEST: "Email is required",
-  RESET_BAD_REQUEST: "Password is required",
-  OAUTH_BAD_REQUEST: "Provided provider is not allowed",
 };
 export class CustomResponse {
   static success<T>({ data, status = 200 }: { data: T; status?: number }) {
@@ -48,18 +35,36 @@ export class CustomResponse {
   static error({
     errorCode,
     status = 400,
-    message,
     ignoreToast = false,
   }: {
-    errorCode: ErrorCode;
+    errorCode: CommonErrorCode;
     status: number;
-    message?: string;
     ignoreToast?: boolean;
   }) {
     const body: ApiResponse = {
       success: false,
       errorCode,
-      error: message || MESSAGE_SOURCE_MAP[errorCode as MESSAGE_MAP_ERROR_CODE],
+      error: MESSAGE_SOURCE_MAP[errorCode],
+      statusCode: status,
+      ignoreToast,
+    };
+    return NextResponse.json(body, { status });
+  }
+  static customError({
+    errorCode,
+    status = 400,
+    message,
+    ignoreToast = false,
+  }: {
+    errorCode: string;
+    status: number;
+    message: string;
+    ignoreToast?: boolean;
+  }) {
+    const body: ApiResponse = {
+      success: false,
+      errorCode,
+      error: message,
       statusCode: status,
       ignoreToast,
     };

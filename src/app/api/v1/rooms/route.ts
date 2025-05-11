@@ -55,8 +55,9 @@ export async function GET(request: NextRequest) {
 export async function POST(req: NextRequest) {
   const { url } = await req.json();
   if (!url) {
-    return CustomResponse.error({
-      errorCode: "URL_BAD_REQUEST",
+    return CustomResponse.customError({
+      errorCode: "BAD_REQUEST",
+      message: "URL is missing",
       status: 400,
     });
   }
@@ -94,8 +95,9 @@ export async function POST(req: NextRequest) {
     .single();
   if (createError) {
     console.error(createError);
-    return CustomResponse.error({
+    return CustomResponse.customError({
       errorCode: "ROOM_CREATE_ERROR",
+      message: "We couldn’t start the analysis. Please try again shortly",
       status: 500,
     });
   }

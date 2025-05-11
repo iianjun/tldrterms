@@ -5,7 +5,7 @@ export async function POST() {
   const supabase = await createClient();
   const { error } = await supabase.auth.signOut();
   if (error) {
-    return CustomResponse.error({
+    return CustomResponse.customError({
       errorCode: "LOGOUT_ERROR",
       message: error.message,
       status: error.status || 500,

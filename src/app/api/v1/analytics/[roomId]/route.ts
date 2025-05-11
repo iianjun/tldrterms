@@ -99,8 +99,9 @@ export async function PATCH(
       .single();
     if (!data || error) {
       console.error(error);
-      return CustomResponse.error({
+      return CustomResponse.customError({
         errorCode: "UPDATE_ROOM_ERROR",
+        message: "We failed to save a text. Please try again later.",
         status: 500,
       });
     }
@@ -136,8 +137,9 @@ export async function DELETE(
     .eq("user_id", userId);
   if (error) {
     console.error(error);
-    return CustomResponse.error({
+    return CustomResponse.customError({
       errorCode: "DELETE_ROOM_ERROR",
+      message: "We failed to delete the room. Please try again later.",
       status: 500,
     });
   }

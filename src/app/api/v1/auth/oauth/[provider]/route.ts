@@ -10,8 +10,9 @@ export async function GET(
 ) {
   const { provider } = await params;
   if (!provider || !SUPPORTING_PROVIDER.includes(provider)) {
-    return CustomResponse.error({
-      errorCode: "AUTH_ERROR",
+    return CustomResponse.customError({
+      errorCode: "BAD_REQUEST",
+      message: "Provided provider is not allowed",
       status: 400,
     });
   }
@@ -24,7 +25,7 @@ export async function GET(
     },
   });
   if (!data?.url || error) {
-    return CustomResponse.error({
+    return CustomResponse.customError({
       errorCode: "AUTH_ERROR",
       message:
         error?.message ?? "Something went wrong, please try again later.",

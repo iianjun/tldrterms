@@ -27,8 +27,9 @@ export async function GET() {
       .order("id", { ascending: true });
     if (!data || !data.length) {
       console.error(error?.message);
-      return CustomResponse.error({
+      return CustomResponse.customError({
         errorCode: "CATEGORY_NOT_FOUND",
+        message: "Categories were not found",
         status: 404,
       });
     }

@@ -5,8 +5,9 @@ import { NextRequest } from "next/server";
 export async function POST(req: NextRequest) {
   const { email } = await req.json();
   if (!email) {
-    return CustomResponse.error({
-      errorCode: "FORGOT_BAD_REQUEST",
+    return CustomResponse.customError({
+      errorCode: "BAD_REQUEST",
+      message: "Email is required",
       status: 400,
     });
   }
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
   });
   if (error) {
     console.error(error);
-    return CustomResponse.error({
+    return CustomResponse.customError({
       errorCode: "AUTH_ERROR",
       message: error.message,
       status: error.status || 500,

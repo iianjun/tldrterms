@@ -26,8 +26,9 @@ export async function GET(request: NextRequest) {
 export async function POST(req: NextRequest) {
   const { password } = await req.json();
   if (!password) {
-    return CustomResponse.error({
-      errorCode: "RESET_BAD_REQUEST",
+    return CustomResponse.customError({
+      errorCode: "BAD_REQUEST",
+      message: "Password is required",
       status: 400,
       ignoreToast: true,
     });
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
   const { error } = await supabase.auth.updateUser({ password });
   if (error) {
     console.error(error);
-    return CustomResponse.error({
+    return CustomResponse.customError({
       errorCode: "RESET_AUTH_ERROR",
       message: error.message,
       status: error.status || 500,

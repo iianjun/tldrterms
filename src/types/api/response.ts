@@ -1,27 +1,15 @@
-export type ErrorCode =
+export type CommonErrorCode =
   | "NO_CREDIT"
   | "UNAUTHORIZED"
   | "ROOM_NOT_FOUND"
   | "INTERNAL_SERVER_ERROR"
-  | "UPDATE_ROOM_ERROR"
-  | "DELETE_ROOM_ERROR"
-  | "URL_BAD_REQUEST"
-  | "CATEGORY_NOT_FOUND"
-  | "ROOM_CREATE_ERROR"
-  | "CREDIT_USAGE_ERROR"
-  | "AUTH_ERROR"
-  | "AUTH_BAD_REQUEST"
-  | "FORGOT_BAD_REQUEST"
-  | "RESET_BAD_REQUEST"
-  | "RESET_AUTH_ERROR"
-  | "LOGOUT_ERROR"
-  | "OAUTH_BAD_REQUEST";
+  | "AUTH_BAD_REQUEST";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
-  errorCode?: ErrorCode;
+  errorCode?: CommonErrorCode | string;
   statusCode?: number;
   ignoreToast?: boolean;
 }

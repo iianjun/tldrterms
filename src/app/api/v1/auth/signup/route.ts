@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
   });
   if (error) {
     console.error(error);
-    return CustomResponse.error({
+    return CustomResponse.customError({
       errorCode: "AUTH_ERROR",
       message: error.message,
       status: error.status || 500,

@@ -503,8 +503,9 @@ export async function GET(
   }
   const { url, manual_text } = roomData;
   if (!url && !manual_text) {
-    return CustomResponse.error({
-      errorCode: "URL_BAD_REQUEST",
+    return CustomResponse.customError({
+      errorCode: "BAD_REQUEST",
+      message: "There is no valid data to start the analysis.",
       status: 400,
     });
   }
