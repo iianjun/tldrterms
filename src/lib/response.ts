@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 type MESSAGE_MAP_ERROR_CODE = Exclude<
   ErrorCode,
-  "AUTH_ERROR" | "RESET_AUTH_ERROR"
+  "AUTH_ERROR" | "RESET_AUTH_ERROR" | "LOGOUT_ERROR"
 >;
 const MESSAGE_SOURCE_MAP: Record<MESSAGE_MAP_ERROR_CODE, string> = {
   UNAUTHORIZED: "Unauthorized",

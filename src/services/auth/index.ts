@@ -27,3 +27,9 @@ export function resetPassword(password: string) {
     body: { password },
   });
 }
+
+export function logout() {
+  return apiClient("/auth/logout", {
+    method: "POST",
+  });
+}

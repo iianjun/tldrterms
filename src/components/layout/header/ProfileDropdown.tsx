@@ -13,20 +13,24 @@ import {
 import { Progress } from "@/components/ui/progress";
 import { usePluralize } from "@/hooks/usePluralize";
 import { useUser } from "@/hooks/useUser";
-import { createClient } from "@/lib/supabase/client";
+import { logout } from "@/services/auth";
+import { useMutation } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import { CircleUserRoundIcon, LogOutIcon, UserIcon } from "lucide-react";
 import { useTheme } from "next-themes";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 interface Props {
   freeCredits: number;
 }
 export default function ProfileDropdown({ freeCredits }: Props) {
   const router = useRouter();
+  const { isPending, mutate } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => router.push("/"),
+  });
   const { user } = useUser();
   const dayText = usePluralize({
     word: "day",
@@ -111,14 +115,8 @@ export default function ProfileDropdown({ freeCredits }: Props) {
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
-            onClick={async () => {
-              const supabase = createClient();
-              const { error } = await supabase.auth.signOut();
-              if (error) {
-                return toast.error(error.message);
-              }
-              router.push("/");
-            }}
+            disabled={isPending}
+            onClick={() => mutate()}
           >
             <LogOutIcon
               size={16}
