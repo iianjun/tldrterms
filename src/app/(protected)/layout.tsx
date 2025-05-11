@@ -1,5 +1,6 @@
-import { createClient } from "@/lib/supabase/server";
-import { UserStoreProvider } from "@/providers/UserStoreProvider";
+import { getQueryClient } from "@/lib/query-client";
+import { getCurrentUser } from "@/services/users";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { redirect } from "next/navigation";
 
 export default async function ProtectedLayout({
@@ -7,8 +8,15 @@ export default async function ProtectedLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (!data.user || error) return redirect("/login");
-  return <UserStoreProvider user={data.user}>{children}</UserStoreProvider>;
+  const queryClient = getQueryClient();
+  const { data, error } = await queryClient.fetchQuery({
+    queryKey: ["user", "me"],
+    queryFn: getCurrentUser,
+  });
+  if (!data || error) return redirect("/login");
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      {children}
+    </HydrationBoundary>
+  );
 }

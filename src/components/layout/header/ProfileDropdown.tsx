@@ -12,8 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Progress } from "@/components/ui/progress";
 import { usePluralize } from "@/hooks/usePluralize";
+import { useUser } from "@/hooks/useUser";
 import { createClient } from "@/lib/supabase/client";
-import { useUserStore } from "@/providers/UserStoreProvider";
 import dayjs from "dayjs";
 import { CircleUserRoundIcon, LogOutIcon, UserIcon } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -27,7 +27,7 @@ interface Props {
 }
 export default function ProfileDropdown({ freeCredits }: Props) {
   const router = useRouter();
-  const user = useUserStore((state) => state.user);
+  const { user } = useUser();
   const dayText = usePluralize({
     word: "day",
     count: dayjs().add(1, "month").startOf("month").diff(dayjs(), "day"),

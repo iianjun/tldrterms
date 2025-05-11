@@ -1,7 +1,7 @@
 import { GitHubIcon, GoogleIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUserStore } from "@/providers/UserStoreProvider";
+import { useUser } from "@/hooks/useUser";
 import { MailIcon } from "lucide-react";
 import Link from "next/link";
 
@@ -20,7 +20,7 @@ const EMAIL_MAP = {
   },
 };
 export default function AccountCredentials() {
-  const user = useUserStore((state) => state.user);
+  const { user } = useUser();
   if (!user) return <></>;
   return (
     <Card className="bg-muted py-4 gap-4">

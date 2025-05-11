@@ -8,8 +8,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useUser } from "@/hooks/useUser";
 import { createClient } from "@/lib/supabase/client";
-import { useUserStore } from "@/providers/UserStoreProvider";
 import { profileSchema } from "@/validations/account";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
@@ -20,8 +20,7 @@ import { z } from "zod";
 
 type FormData = z.infer<typeof profileSchema>;
 export default function ProfileInformation() {
-  const user = useUserStore((state) => state.user);
-  const setUser = useUserStore((state) => state.setUser);
+  const { user, setUser } = useUser();
   const [loading, setLoading] = useState(false);
   const { register, reset, watch, handleSubmit } = useForm<FormData>({
     resolver: zodResolver(profileSchema),
