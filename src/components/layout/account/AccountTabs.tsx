@@ -3,10 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
-const TABS = [
-  { id: "general", label: "General" },
-  { id: "password", label: "Password" },
-];
+const TABS = [{ id: "general", label: "General" }];
 export default function AccountTabs() {
   const { tab } = useParams<{ tab: string }>();
   return (

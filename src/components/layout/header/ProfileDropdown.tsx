@@ -98,7 +98,7 @@ export default function ProfileDropdown({ freeCredits }: Props) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem className="cursor-pointer" asChild>
-            <Link href="/account">
+            <Link href="/account/general">
               <UserIcon
                 size={16}
                 strokeWidth={2}

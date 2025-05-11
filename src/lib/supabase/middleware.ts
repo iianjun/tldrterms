@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
 const PROTECTED_PATHS = ["/analytics", "/account"];
+const PUBLIC_PATHS = ["/", "/login", "/signup", "/forgot-password"];
 export const updateSession = async (request: NextRequest) => {
   try {
     let response = NextResponse.next({
@@ -33,7 +34,7 @@ export const updateSession = async (request: NextRequest) => {
       }
     );
     const user = await supabase.auth.getUser();
-    // protected routes
+    // protected routes and not logged in
     if (
       PROTECTED_PATHS.some((path) =>
         request.nextUrl.pathname.startsWith(path)
@@ -42,11 +43,10 @@ export const updateSession = async (request: NextRequest) => {
     ) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-
-    if (request.nextUrl.pathname === "/" && !user.error) {
+    // public routes and logged in
+    if (PUBLIC_PATHS.includes(request.nextUrl.pathname) && !user.error) {
       return NextResponse.redirect(new URL("/analytics", request.url));
     }
-
     return response;
   } catch (e) {
     console.error(`Supabase middleware error`, e);
