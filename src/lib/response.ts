@@ -1,7 +1,10 @@
 import type { ApiResponse, ErrorCode, Pagination } from "@/types/api";
 import { NextResponse } from "next/server";
 
-type MESSAGE_MAP_ERROR_CODE = Exclude<ErrorCode, "AUTH_ERROR">;
+type MESSAGE_MAP_ERROR_CODE = Exclude<
+  ErrorCode,
+  "AUTH_ERROR" | "RESET_AUTH_ERROR"
+>;
 const MESSAGE_SOURCE_MAP: Record<MESSAGE_MAP_ERROR_CODE, string> = {
   UNAUTHORIZED: "Unauthorized",
   NO_CREDIT: "No credits available",
@@ -15,6 +18,7 @@ const MESSAGE_SOURCE_MAP: Record<MESSAGE_MAP_ERROR_CODE, string> = {
   CREDIT_USAGE_ERROR: "Error on using credit",
   AUTH_BAD_REQUEST: "Email and password are required",
   FORGOT_BAD_REQUEST: "Email is required",
+  RESET_BAD_REQUEST: "Password is required",
 };
 export class CustomResponse {
   static success<T>({ data, status = 200 }: { data: T; status?: number }) {
@@ -44,12 +48,19 @@ export class CustomResponse {
     errorCode,
     status = 400,
     message,
-  }: { errorCode: ErrorCode; status: number; message?: string }) {
+    ignoreToast = false,
+  }: {
+    errorCode: ErrorCode;
+    status: number;
+    message?: string;
+    ignoreToast?: boolean;
+  }) {
     const body: ApiResponse = {
       success: false,
       errorCode,
       error: message || MESSAGE_SOURCE_MAP[errorCode as MESSAGE_MAP_ERROR_CODE],
       statusCode: status,
+      ignoreToast,
     };
     return NextResponse.json(body, { status });
   }

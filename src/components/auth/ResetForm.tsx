@@ -2,19 +2,23 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { resetPassword } from "@/services/auth";
+import { ApiResponse } from "@/types/api";
 import { resetPasswordSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { IFetchError } from "ofetch";
 import { useForm } from "react-hook-form";
 import { ExternalToast, toast } from "sonner";
 import { z } from "zod";
 type FormData = z.infer<typeof resetPasswordSchema>;
 function ResetForm() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: ({ password }: { password: string }) => resetPassword(password),
+  });
   const {
     register,
     handleSubmit,
@@ -29,31 +33,21 @@ function ResetForm() {
     <form
       className="flex flex-col gap-4"
       onSubmit={handleSubmit(async ({ password }) => {
-        const supabase = createClient();
+        const toastData: ExternalToast = {
+          position: "top-right",
+          id: "reset-password-toast",
+        };
         try {
-          const toastData: ExternalToast = {
-            position: "top-right",
-            id: "reset-password-toast",
-          };
-          setLoading(true);
           toast.loading("Saving password...", toastData);
-          const { data, error } = await supabase.auth.updateUser({ password });
-          if (error || !data.user.email) {
-            return toast.error(
-              error?.message || "Something went wrong. Please try again later.",
-              toastData
-            );
-          }
+          await mutateAsync({ password });
           toast.success("Password saved successfully!", toastData);
-          await supabase.auth.signInWithPassword({
-            email: data.user.email,
-            password,
-          });
           router.push("/analytics");
-        } catch {
-          return toast.error("Something went wrong. Please try again later.");
-        } finally {
-          setLoading(false);
+        } catch (e) {
+          const error = e as unknown as IFetchError<ApiResponse>;
+          toast.error(
+            error.response?._data?.error || "Something went wrong.",
+            toastData
+          );
         }
       })}
     >
@@ -69,8 +63,8 @@ function ResetForm() {
           <p className="text-destructive text-sm">{errors.password?.message}</p>
         )}
       </div>
-      <Button disabled={loading}>
-        {loading && <Loader2Icon className="animate-spin" />}
+      <Button disabled={isPending}>
+        {isPending && <Loader2Icon className="animate-spin" />}
         Save New Password
       </Button>
     </form>

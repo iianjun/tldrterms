@@ -12,6 +12,7 @@ function makeQueryClient() {
       mutations: {
         onError({ response }: IFetchError<ApiResponse>) {
           const errorCode = response?._data?.errorCode;
+          if (response?._data?.ignoreToast) return;
           if (errorCode === "NO_CREDIT") {
             toast.error("Your monthly credit limit has been reached.");
           } else {

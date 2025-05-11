@@ -11,13 +11,16 @@ export type ErrorCode =
   | "CREDIT_USAGE_ERROR"
   | "AUTH_ERROR"
   | "AUTH_BAD_REQUEST"
-  | "FORGOT_BAD_REQUEST";
+  | "FORGOT_BAD_REQUEST"
+  | "RESET_BAD_REQUEST"
+  | "RESET_AUTH_ERROR";
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
   errorCode?: ErrorCode;
   statusCode?: number;
+  ignoreToast?: boolean;
 }
 
 export interface Pagination<T = unknown> extends ApiResponse<T> {

@@ -20,3 +20,10 @@ export function forgotPassword(email: string) {
     body: { email },
   });
 }
+
+export function resetPassword(password: string) {
+  return apiClient("/auth/reset", {
+    method: "POST",
+    body: { password },
+  });
+}

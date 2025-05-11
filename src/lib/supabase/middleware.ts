@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-const PROTECTED_PATHS = ["/analytics", "/account"];
+const PROTECTED_PATHS = ["/analytics", "/account", "/reset-password"];
 const PUBLIC_PATHS = ["/", "/login", "/signup", "/forgot-password"];
 export const updateSession = async (request: NextRequest) => {
   try {
