@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { usePassword } from "@/hooks/usePassword";
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
+import { signup } from "@/services/auth";
 import { signupSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   CircleCheckIcon,
@@ -32,10 +33,15 @@ const PASSWORD_TEXT = {
 type FormData = z.infer<typeof signupSchema>;
 export default function SignupForm() {
   const router = useRouter();
-
+  const { mutate, isPending } = useMutation({
+    mutationFn: (credentials: FormData) => signup(credentials),
+    onSuccess: () => {
+      toast.success("Check your email for the confirmation link.");
+      router.push("/login");
+    },
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [focused, setFocused] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -52,30 +58,11 @@ export default function SignupForm() {
   const password = watch("password");
   const { validation } = usePassword({ password });
 
-  const onSubmit = async (credentials: FormData) => {
-    const supabase = createClient();
-    try {
-      setLoading(true);
-      const { error } = await supabase.auth.signUp({
-        ...credentials,
-        options: {
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
-        },
-      });
-      if (error) {
-        return toast.error(error.message);
-      }
-      toast.success("Check your email for the confirmation link.");
-      router.push("/login");
-    } catch {
-      return toast.error("Something went wrong. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="flex flex-col gap-4"
+      onSubmit={handleSubmit((credentials) => mutate(credentials))}
+    >
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
@@ -147,8 +134,8 @@ export default function SignupForm() {
           ))}
         </motion.ul>
       </div>
-      <Button disabled={loading}>
-        {loading && <Loader2Icon className="animate-spin" />}Sign up
+      <Button disabled={isPending}>
+        {isPending && <Loader2Icon className="animate-spin" />}Sign up
       </Button>
     </form>
   );

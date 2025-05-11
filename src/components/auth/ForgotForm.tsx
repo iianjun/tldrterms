@@ -3,19 +3,31 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { forgotPassword } from "@/services/auth";
 import { forgotPasswordSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+
 type FormData = z.infer<typeof forgotPasswordSchema>;
 export default function ForgotForm() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const { isPending, mutate } = useMutation({
+    mutationFn: ({ email }: { email: string }) => forgotPassword(email),
+    onSuccess: () => {
+      toast.success(
+        "If you registered using your email and password, you will receive a password reset email. The password reset link expires in 10 minutes.",
+        {
+          position: "top-right",
+        }
+      );
+      router.push("/login");
+    },
+  });
   const {
     register,
     handleSubmit,
@@ -29,29 +41,7 @@ export default function ForgotForm() {
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={handleSubmit(async ({ email }) => {
-        const supabase = createClient();
-        try {
-          setLoading(true);
-          const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/reset-password`,
-          });
-          if (error) {
-            return toast.error(error.message);
-          }
-          toast.success(
-            "If you registered using your email and password, you will receive a password reset email. The password reset link expires in 10 minutes.",
-            {
-              position: "top-right",
-            }
-          );
-          router.push("/login");
-        } catch {
-          return toast.error("Something went wrong. Please try again later.");
-        } finally {
-          setLoading(false);
-        }
-      })}
+      onSubmit={handleSubmit(({ email }) => mutate({ email }))}
     >
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email</Label>
@@ -65,8 +55,8 @@ export default function ForgotForm() {
           <p className="text-destructive text-sm">{errors.email?.message}</p>
         )}
       </div>
-      <Button disabled={loading}>
-        {loading && <Loader2Icon className="animate-spin" />}
+      <Button disabled={isPending}>
+        {isPending && <Loader2Icon className="animate-spin" />}
         Send Reset Email
       </Button>
     </form>

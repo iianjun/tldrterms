@@ -1,7 +1,8 @@
 import type { ApiResponse, ErrorCode, Pagination } from "@/types/api";
 import { NextResponse } from "next/server";
 
-const MESSAGE_SOURCE_MAP: Record<ErrorCode, string> = {
+type MESSAGE_MAP_ERROR_CODE = Exclude<ErrorCode, "AUTH_ERROR">;
+const MESSAGE_SOURCE_MAP: Record<MESSAGE_MAP_ERROR_CODE, string> = {
   UNAUTHORIZED: "Unauthorized",
   NO_CREDIT: "No credits available",
   ROOM_NOT_FOUND: "Room not found",
@@ -12,6 +13,8 @@ const MESSAGE_SOURCE_MAP: Record<ErrorCode, string> = {
   CATEGORY_NOT_FOUND: "Categories not found",
   ROOM_CREATE_ERROR: "Error on creating room",
   CREDIT_USAGE_ERROR: "Error on using credit",
+  AUTH_BAD_REQUEST: "Email and password are required",
+  FORGOT_BAD_REQUEST: "Email is required",
 };
 export class CustomResponse {
   static success<T>({ data, status = 200 }: { data: T; status?: number }) {
@@ -40,11 +43,12 @@ export class CustomResponse {
   static error({
     errorCode,
     status = 400,
-  }: { errorCode: ErrorCode; status: number }) {
+    message,
+  }: { errorCode: ErrorCode; status: number; message?: string }) {
     const body: ApiResponse = {
       success: false,
       errorCode,
-      error: MESSAGE_SOURCE_MAP[errorCode],
+      error: message || MESSAGE_SOURCE_MAP[errorCode as MESSAGE_MAP_ERROR_CODE],
       statusCode: status,
     };
     return NextResponse.json(body, { status });

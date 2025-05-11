@@ -2,21 +2,25 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
+import { login } from "@/services/auth";
 import { loginSchema } from "@/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
 import { z } from "zod";
 
 type FormData = z.infer<typeof loginSchema>;
 export default function LoginForm() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const { mutate, isPending } = useMutation({
+    mutationFn: (credentials: FormData) => login(credentials),
+    onSuccess: () => {
+      router.push("/analytics");
+    },
+  });
   const {
     register,
     handleSubmit,
@@ -32,21 +36,7 @@ export default function LoginForm() {
   return (
     <form
       className="flex flex-col gap-4"
-      onSubmit={handleSubmit(async (credentials) => {
-        const supabase = createClient();
-        try {
-          setLoading(true);
-          const { error } = await supabase.auth.signInWithPassword(credentials);
-          if (error) {
-            return toast.error(error.message);
-          }
-          router.push("/analytics");
-        } catch {
-          return toast.error("Something went wrong. Please try again later.");
-        } finally {
-          setLoading(false);
-        }
-      })}
+      onSubmit={handleSubmit((credentials) => mutate(credentials))}
     >
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">Email</Label>
@@ -66,6 +56,7 @@ export default function LoginForm() {
           <Button
             className="p-0 h-fit text-muted-foreground"
             variant="link"
+            tabIndex={-1}
             asChild
           >
             <Link href="/forgot-password">Forgot Password?</Link>
@@ -81,8 +72,8 @@ export default function LoginForm() {
           <p className="text-destructive text-sm">{errors.password?.message}</p>
         )}
       </div>
-      <Button disabled={loading}>
-        {loading && <Loader2Icon className="animate-spin" />}Sign In
+      <Button disabled={isPending}>
+        {isPending && <Loader2Icon className="animate-spin" />}Sign In
       </Button>
     </form>
   );

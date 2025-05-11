@@ -8,7 +8,10 @@ export type ErrorCode =
   | "URL_BAD_REQUEST"
   | "CATEGORY_NOT_FOUND"
   | "ROOM_CREATE_ERROR"
-  | "CREDIT_USAGE_ERROR";
+  | "CREDIT_USAGE_ERROR"
+  | "AUTH_ERROR"
+  | "AUTH_BAD_REQUEST"
+  | "FORGOT_BAD_REQUEST";
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
