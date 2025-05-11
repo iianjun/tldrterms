@@ -14,7 +14,8 @@ export type ErrorCode =
   | "FORGOT_BAD_REQUEST"
   | "RESET_BAD_REQUEST"
   | "RESET_AUTH_ERROR"
-  | "LOGOUT_ERROR";
+  | "LOGOUT_ERROR"
+  | "OAUTH_BAD_REQUEST";
 
 export interface ApiResponse<T = unknown> {
   success: boolean;

@@ -1,8 +1,8 @@
 "use client";
 import { GitHubIcon, GoogleIcon } from "@/components/icons";
 import { Button } from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
-import { toast } from "sonner";
+import { oauth } from "@/services/auth";
+import { useMutation } from "@tanstack/react-query";
 
 interface OAuthButtonProps {
   provider: "google" | "github";
@@ -18,22 +18,19 @@ const SOURCE_MAP = {
   },
 };
 export default function OAuthButton({ provider }: Readonly<OAuthButtonProps>) {
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => oauth(provider),
+    onSuccess: ({ data }) => {
+      if (!data) return;
+      window.location.href = data.url;
+    },
+  });
   return (
     <Button
       type="button"
       variant="outline"
-      onClick={async () => {
-        const supabase = createClient();
-        const { data, error } = await supabase.auth.signInWithOAuth({
-          provider,
-          options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
-          },
-        });
-        if (!data?.url || error) {
-          return toast.error("Something went wrong, please try again later.");
-        }
-      }}
+      disabled={isPending}
+      onClick={() => mutate()}
     >
       {SOURCE_MAP[provider].icon}
       Continue with {SOURCE_MAP[provider].label}

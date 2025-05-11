@@ -19,6 +19,7 @@ const MESSAGE_SOURCE_MAP: Record<MESSAGE_MAP_ERROR_CODE, string> = {
   AUTH_BAD_REQUEST: "Email and password are required",
   FORGOT_BAD_REQUEST: "Email is required",
   RESET_BAD_REQUEST: "Password is required",
+  OAUTH_BAD_REQUEST: "Provided provider is not allowed",
 };
 export class CustomResponse {
   static success<T>({ data, status = 200 }: { data: T; status?: number }) {
