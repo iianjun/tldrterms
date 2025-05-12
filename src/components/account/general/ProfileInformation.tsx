@@ -9,20 +9,30 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUser } from "@/hooks/useUser";
-import { createClient } from "@/lib/supabase/client";
+import { updateProfile } from "@/services/users";
+import { UpdateUserValues } from "@/types/api/user";
 import { profileSchema } from "@/validations/account";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
-type FormData = z.infer<typeof profileSchema>;
 export default function ProfileInformation() {
-  const { user, setUser } = useUser();
-  const [loading, setLoading] = useState(false);
-  const { register, reset, watch, handleSubmit } = useForm<FormData>({
+  const { user, updateUser } = useUser();
+  const { mutate, isPending } = useMutation({
+    mutationFn: (data: UpdateUserValues) => updateProfile(data),
+    onSuccess: ({ data }) => {
+      toast.success("Profile updated successfully!");
+      updateUser({
+        user_metadata: {
+          full_name: data?.name,
+          name: data?.name,
+        },
+      });
+    },
+  });
+  const { register, reset, watch, handleSubmit } = useForm<UpdateUserValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
       name: user?.user_metadata.name || "",
@@ -30,33 +40,7 @@ export default function ProfileInformation() {
   });
   const name = watch("name");
   return (
-    <form
-      onSubmit={handleSubmit(async (data) => {
-        setLoading(true);
-        const supabase = createClient();
-        const { error } = await supabase.auth.updateUser({
-          data: {
-            name: data.name,
-            full_name: data.name,
-          },
-        });
-        if (error) {
-          return toast.error(error.message);
-        }
-        toast.success("Profile updated successfully!");
-        if (user) {
-          setUser({
-            ...user,
-            user_metadata: {
-              ...user.user_metadata,
-              full_name: data.name,
-              name: data.name,
-            },
-          });
-        }
-        setLoading(false);
-      })}
-    >
+    <form onSubmit={handleSubmit((data) => mutate(data))}>
       <Card className="bg-muted py-4 gap-4">
         <CardHeader className="border-b pb-4">
           <CardTitle variant="h2">Profile information</CardTitle>
@@ -82,8 +66,8 @@ export default function ProfileInformation() {
           >
             Cancel
           </Button>
-          <Button disabled={!name || loading} type="submit">
-            {loading && <Loader2Icon className="animate-spin" />}
+          <Button disabled={!name || isPending} type="submit">
+            {isPending && <Loader2Icon className="animate-spin" />}
             Save
           </Button>
         </CardFooter>

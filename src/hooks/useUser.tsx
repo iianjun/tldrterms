@@ -11,7 +11,10 @@ export function useUser() {
     queryFn: getCurrentUser,
   });
 
-  const setUser = (updated: Partial<User>) => {
+  const setUser = (user: User) => {
+    queryClient.setQueryData(["user", "me"], () => user);
+  };
+  const updateUser = (updated: Partial<User>) => {
     queryClient.setQueryData(
       ["user", "me"],
       (oldData: Awaited<ReturnType<typeof getCurrentUser>>) => {
@@ -25,5 +28,5 @@ export function useUser() {
       }
     );
   };
-  return { user: result?.data, setUser };
+  return { user: result?.data, setUser, updateUser };
 }
