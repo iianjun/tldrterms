@@ -171,6 +171,27 @@ export type Database = {
           },
         ];
       };
+      deletion_survey: {
+        Row: {
+          created_at: string;
+          id: number;
+          other_reason: string | null;
+          reasons: Database["public"]["Enums"]["deletion_survey_reason"][];
+        };
+        Insert: {
+          created_at?: string;
+          id?: number;
+          other_reason?: string | null;
+          reasons?: Database["public"]["Enums"]["deletion_survey_reason"][];
+        };
+        Update: {
+          created_at?: string;
+          id?: number;
+          other_reason?: string | null;
+          reasons?: Database["public"]["Enums"]["deletion_survey_reason"][];
+        };
+        Relationships: [];
+      };
       usage_logs: {
         Row: {
           created_at: string;
@@ -218,6 +239,13 @@ export type Database = {
         | "pp_changes"
         | "children";
       analytic_status_type: "idle" | "error" | "completed";
+      deletion_survey_reason:
+        | "not-useful"
+        | "hard-to-use"
+        | "found-alternative"
+        | "privacy-concerns"
+        | "too-many-emails"
+        | "other";
       score_category:
         | "excellent"
         | "good"
@@ -360,6 +388,14 @@ export const Constants = {
         "children",
       ],
       analytic_status_type: ["idle", "error", "completed"],
+      deletion_survey_reason: [
+        "not-useful",
+        "hard-to-use",
+        "found-alternative",
+        "privacy-concerns",
+        "too-many-emails",
+        "other",
+      ],
       score_category: [
         "excellent",
         "good",

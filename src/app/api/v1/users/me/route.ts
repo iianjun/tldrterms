@@ -1,6 +1,8 @@
 import { CustomResponse } from "@/lib/response";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
+import { DeleteAccountSurveyValues } from "@/types/api";
 import { NextRequest } from "next/server";
 
 export async function GET() {
@@ -52,4 +54,42 @@ export async function PATCH(request: NextRequest) {
       name,
     },
   });
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { reasons, otherReason } =
+      (await request.json()) as DeleteAccountSurveyValues;
+    const { userId, isInvalid } = await getAuthentication();
+
+    if (isInvalid) {
+      return CustomResponse.error({
+        errorCode: "UNAUTHORIZED",
+        status: 401,
+      });
+    }
+    const client = await createClient();
+    await client.from("deletion_survey").insert({
+      reasons: reasons,
+      other_reason: otherReason,
+    });
+    const adminClient = createAdminClient();
+    const { error } = await adminClient.auth.admin.deleteUser(userId);
+    if (error) {
+      return CustomResponse.customError({
+        errorCode: "USER_DELETE_ERROR",
+        message: error.message,
+        status: error.status || 500,
+      });
+    }
+    return CustomResponse.success({
+      data: true,
+    });
+  } catch (e) {
+    console.error(e);
+    return CustomResponse.error({
+      errorCode: "INTERNAL_SERVER_ERROR",
+      status: 500,
+    });
+  }
 }

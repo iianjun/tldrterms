@@ -4,10 +4,10 @@ import FetchError from "@/components/analytics/details/FetchError";
 import InitialAnimation from "@/components/analytics/details/InitialAnimation";
 import { useSSE } from "@/hooks/useSSE";
 import { getAnalyticsRoomById } from "@/services/analytics";
-import { ApiResponse } from "@/types/api";
+import { ApiResponse, Pagination } from "@/types/api";
 import { SSEResponse, SSEStatus } from "@/types/openai";
 import { Analytic, AnalyticRoom } from "@/types/supabase";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { InfiniteData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -57,13 +57,32 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
       if (room) {
         queryClient.setQueryData(
           ["rooms"],
-          (oldData: ApiResponse<AnalyticRoom[]>) => ({
-            ...oldData,
-            data: [
+          (oldData: InfiniteData<Pagination<AnalyticRoom[]>>) => {
+            const allPages = [
               room,
-              ...(oldData.data || []).filter((r) => r.id !== room.id),
-            ],
-          })
+              ...oldData.pages.flatMap((page) => page.data || []),
+            ];
+            const limit = oldData.pages[0].pagination.limit;
+            const ret: Pagination<AnalyticRoom[]>[] = [];
+            const total = allPages.length + 1;
+            for (let i = 0; i < Math.ceil(allPages.length / limit); i++) {
+              const offset = i * limit;
+              ret.push({
+                ...oldData.pages[i],
+                data: allPages.slice(offset, offset + limit),
+                pagination: {
+                  offset,
+                  limit,
+                  total,
+                  hasNext: offset + 1 < Math.ceil((total || 0) / limit),
+                },
+              });
+            }
+            return {
+              ...oldData,
+              pages: ret,
+            };
+          }
         );
         queryClient.setQueryData(
           ["rooms", room.id.toString()],
