@@ -77,6 +77,7 @@ export async function DELETE(request: NextRequest) {
     const adminClient = createAdminClient();
     const { error } = await adminClient.auth.admin.deleteUser(userId);
     if (error) {
+      console.error(error);
       return CustomResponse.customError({
         errorCode: "USER_DELETE_ERROR",
         message: error.message,

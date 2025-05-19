@@ -11,18 +11,19 @@ export async function POST(req: NextRequest) {
     });
   }
   const supabase = await createClient();
-  const { data: deletionHistory } = await supabase
-    .from("deletion_survey")
-    .select("*")
+  const { data: bannedEmail } = await supabase
+    .from("banned_emails")
+    .select("id")
     .eq("email", email)
     .single();
-  if (deletionHistory) {
+  if (bannedEmail) {
     return CustomResponse.customError({
       errorCode: "USER_DELETED",
       message: "User has been deleted",
       status: 400,
     });
   }
+
   const { error } = await supabase.auth.signUp({
     email,
     password,

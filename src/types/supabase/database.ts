@@ -124,6 +124,24 @@ export type Database = {
           },
         ];
       };
+      banned_emails: {
+        Row: {
+          banned_at: string;
+          email: string;
+          id: number;
+        };
+        Insert: {
+          banned_at?: string;
+          email: string;
+          id?: number;
+        };
+        Update: {
+          banned_at?: string;
+          email?: string;
+          id?: number;
+        };
+        Relationships: [];
+      };
       categories: {
         Row: {
           category_id: Database["public"]["Enums"]["analytic_point_category"];
