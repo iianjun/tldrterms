@@ -54,13 +54,18 @@ export default function ProfileDropdown({ freeCredits }: Props) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="max-w-64">
         <DropdownMenuLabel className="flex items-center gap-3">
-          <Image
-            src={user.user_metadata.avatar_url}
-            alt="Avatar"
-            width={32}
-            height={32}
-            className="shrink-0 rounded-full"
-          />
+          {user.user_metadata.avatar_url ? (
+            <Image
+              src={user.user_metadata.avatar_url}
+              alt="Avatar"
+              width={32}
+              height={32}
+              className="shrink-0 rounded-full"
+            />
+          ) : (
+            <CircleUserRoundIcon className="size-8" />
+          )}
+
           <div className="flex min-w-0 flex-col">
             <span className="truncate font-medium text-foreground text-sm">
               {user.user_metadata.full_name}

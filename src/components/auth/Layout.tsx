@@ -47,7 +47,12 @@ const SOURCE_MAP = {
   },
 };
 
-type Pathname = "/login" | "/signup" | "/forgot-password" | "/reset-password";
+type Pathname =
+  | "/login"
+  | "/signup"
+  | "/forgot-password"
+  | "/reset-password"
+  | "/auth/auth-code-error";
 
 export default function AuthLayout({
   children,
@@ -55,6 +60,9 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   const pathname = (usePathname() || "/login") as Pathname;
+  if (pathname === "/auth/auth-code-error") {
+    return children;
+  }
   return (
     <div className="mx-auto flex w-82.5 flex-col justify-center sm:w-96">
       <div className="mb-10">

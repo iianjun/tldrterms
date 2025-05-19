@@ -6,5 +6,9 @@ export async function getAuthentication() {
     data: { user },
     error: userError,
   } = await supabase.auth.getUser();
-  return { userId: user?.id || "", isInvalid: userError || !user };
+  return {
+    userId: user?.id || "",
+    isInvalid: userError || !user,
+    email: user?.email,
+  };
 }

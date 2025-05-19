@@ -1,3 +1,4 @@
+import AuthError from "@/assets/icons/auth-error.svg";
 import DarkAppearance from "@/assets/icons/dark-appearance.svg";
 import GitHub from "@/assets/icons/github.svg";
 import Google from "@/assets/icons/google.svg";
@@ -34,6 +35,10 @@ export const NotFoundIcon = (props: IconProps) => {
 
 export const InternalErrorIcon = (props: IconProps) => {
   return <InternalError {...props} />;
+};
+
+export const AuthErrorIcon = (props: IconProps) => {
+  return <AuthError {...props} />;
 };
 
 export const AppearanceIcon = ({

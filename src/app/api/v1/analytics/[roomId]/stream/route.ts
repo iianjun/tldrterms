@@ -45,17 +45,25 @@ export async function performValidation(text: string) {
         {
           role: "system",
           content: `
-  You are an AI classifier. Given some website text, return a JSON object with:
-  - 'language': one of 'EN' (English), 'KO' (Korean), or 'ETC' (any other)
-  - 'document_type': 'terms' if the text appears to be a Terms of Service, 'privacy' if the text appears to be a Privacy Policy, 'unknown' otherwise.
-
-  Respond only with a compact JSON object like:
-  { "language": "EN", "document_type": terms }
-          `,
+  You are a highly accurate document-type classifier. When given a block of website text, you must:
+  1. Identify the primary language:
+   • “EN” if predominantly English
+   • “KO” if predominantly Korean
+   • “ETC” otherwise
+  
+  2. Decide the document type:
+   • “terms” if it is a Terms of Service / Terms & Conditions  
+   • “privacy” if it is a Privacy Policy  
+   • “unknown” if it is neither or ambiguous
+   
+  Use all available cues—section headings (“Terms of Use”, “Privacy Policy”), keyword patterns (“we collect”, “your rights”, “governing law” for T&C; “data collection”, “cookies”, “personal information” for Privacy), tone (legal vs data‐protection focus), and structural markers.
+  Respond **only** with a JSON object, for example:
+  {"language":"EN","document_type":"privacy"}
+      `.trim(),
         },
         {
           role: "user",
-          content: text.slice(0, 2000),
+          content: text.slice(0, 4000),
         },
       ],
     });
@@ -73,7 +81,7 @@ export async function performValidation(text: string) {
       return {
         isSuccess: false,
         message:
-          "This page does not appear to be a Terms of Service or Privacy Policy. Please provide a direct link to such a page.",
+          "This page does not appear to be a Terms of Conditions or Privacy Policy. Please provide a direct link to such a page.",
       };
     }
     return {

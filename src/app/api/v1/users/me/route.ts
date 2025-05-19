@@ -60,9 +60,9 @@ export async function DELETE(request: NextRequest) {
   try {
     const { reasons, otherReason } =
       (await request.json()) as DeleteAccountSurveyValues;
-    const { userId, isInvalid } = await getAuthentication();
+    const { userId, email, isInvalid } = await getAuthentication();
 
-    if (isInvalid) {
+    if (isInvalid || !email) {
       return CustomResponse.error({
         errorCode: "UNAUTHORIZED",
         status: 401,
@@ -72,6 +72,7 @@ export async function DELETE(request: NextRequest) {
     await client.from("deletion_survey").insert({
       reasons: reasons,
       other_reason: otherReason,
+      email,
     });
     const adminClient = createAdminClient();
     const { error } = await adminClient.auth.admin.deleteUser(userId);

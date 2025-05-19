@@ -174,18 +174,21 @@ export type Database = {
       deletion_survey: {
         Row: {
           created_at: string;
+          email: string;
           id: number;
           other_reason: string | null;
           reasons: Database["public"]["Enums"]["deletion_survey_reason"][];
         };
         Insert: {
           created_at?: string;
+          email: string;
           id?: number;
           other_reason?: string | null;
           reasons?: Database["public"]["Enums"]["deletion_survey_reason"][];
         };
         Update: {
           created_at?: string;
+          email?: string;
           id?: number;
           other_reason?: string | null;
           reasons?: Database["public"]["Enums"]["deletion_survey_reason"][];
