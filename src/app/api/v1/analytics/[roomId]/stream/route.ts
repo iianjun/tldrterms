@@ -34,7 +34,7 @@ async function performFetching(url: string) {
   }
 }
 
-export async function performValidation(text: string) {
+async function performValidation(text: string) {
   try {
     //Language/content detection
     const validation = await openai.chat.completions.create({
