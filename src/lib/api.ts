@@ -3,10 +3,11 @@ const isBrowser = typeof window !== "undefined";
 
 export const apiClient = ofetch.create({
   baseURL: isBrowser ? "/api/v1" : process.env.API_URL,
-  async onRequest({ options }) {
+  async onRequest() {
     if (isBrowser) return;
-    const { headers } = await import("next/headers");
-    options.headers = await headers();
-    console.log("onRequest after headers");
+    // const { headers } = await import("next/headers");
+    // const headersList = await headers();
+    // options.headers = Object.fromEntries(headersList);
+    // console.log("onRequest after headers");
   },
 });
