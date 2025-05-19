@@ -6,17 +6,25 @@ import { DeleteAccountSurveyValues } from "@/types/api";
 import { NextRequest } from "next/server";
 
 export async function GET() {
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      return CustomResponse.error({
+        errorCode: "UNAUTHORIZED",
+        status: 401,
+      });
+    }
+    return CustomResponse.success({
+      data: data.user,
+    });
+  } catch (e) {
+    console.error(e);
     return CustomResponse.error({
-      errorCode: "UNAUTHORIZED",
-      status: 401,
+      errorCode: "INTERNAL_SERVER_ERROR",
+      status: 500,
     });
   }
-  return CustomResponse.success({
-    data: data.user,
-  });
 }
 
 export async function PATCH(request: NextRequest) {
