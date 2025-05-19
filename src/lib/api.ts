@@ -6,6 +6,9 @@ export const apiClient = ofetch.create({
   async onRequest({ options }) {
     if (isBrowser) return;
     const { headers } = await import("next/headers");
-    options.headers = await headers();
+    const headersList = await headers();
+    headersList.forEach((value, key) => {
+      options.headers.set(key, value);
+    });
   },
 });
