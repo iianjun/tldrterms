@@ -54,7 +54,6 @@
         "useConst": "error"
       },
       "suspicious": {
-        "noConsoleLog": "error",
         "noClassAssign": "off",
         "noCommentText": "error",
         "noDuplicateClassMembers": "off",

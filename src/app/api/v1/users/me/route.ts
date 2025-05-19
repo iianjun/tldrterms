@@ -7,6 +7,7 @@ import { NextRequest } from "next/server";
 
 export async function GET() {
   try {
+    console.log("In GET");
     const supabase = await createClient();
     const { data, error } = await supabase.auth.getUser();
     if (error) {
