@@ -3,7 +3,7 @@ import OAuthButton from "@/components/auth/OAuthButton";
 import { Separator } from "@/components/ui/separator";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 
 const SOURCE_MAP = {
   "/login": {
@@ -61,7 +61,7 @@ export default function AuthLayout({
 }>) {
   const pathname = (usePathname() || "/login") as Pathname;
   if (pathname === "/auth/auth-code-error") {
-    return children;
+    return <Suspense>{children}</Suspense>;
   }
   return (
     <div className="mx-auto flex w-82.5 flex-col justify-center sm:w-96">
