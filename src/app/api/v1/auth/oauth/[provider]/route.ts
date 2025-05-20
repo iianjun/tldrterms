@@ -17,6 +17,7 @@ export async function GET(
     });
   }
   const supabase = await createClient();
+  console.log(process.env.NEXT_PUBLIC_BASE_URL);
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
