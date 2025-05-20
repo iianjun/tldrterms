@@ -3,6 +3,16 @@ import { createClient } from "@/lib/supabase/server";
 import { Provider } from "@supabase/supabase-js";
 import { NextRequest } from "next/server";
 
+const getURL = () => {
+  let url =
+    process?.env?.NEXT_PUBLIC_BASE_URL ??
+    process?.env?.NEXT_PUBLIC_VERCEL_URL ??
+    "http://localhost:3000/";
+  url = url.startsWith("http") ? url : `https://${url}`;
+  url = url.endsWith("/") ? url : `${url}/`;
+  return url;
+};
+
 const SUPPORTING_PROVIDER = ["google", "github"];
 export async function GET(
   _: NextRequest,
@@ -17,11 +27,10 @@ export async function GET(
     });
   }
   const supabase = await createClient();
-  console.log(process.env.NEXT_PUBLIC_BASE_URL);
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+      redirectTo: getURL(),
       skipBrowserRedirect: true,
     },
   });
