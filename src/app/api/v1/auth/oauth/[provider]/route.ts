@@ -30,7 +30,7 @@ export async function GET(
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: getURL(),
+      redirectTo: `${getURL()}/auth/callback`,
       skipBrowserRedirect: true,
     },
   });
