@@ -1,5 +1,6 @@
 import { convertHtmlToText } from "@/utils/html-to-text";
-import { chromium } from "playwright";
+import chromium from "@sparticuz/chromium";
+import playwright from "playwright-core";
 
 export function normalizeUrl(url: string): string {
   if (!url) return "";
@@ -25,9 +26,12 @@ export function normalizeUrl(url: string): string {
 }
 
 export async function extractTextFromUrl(url: string): Promise<string> {
-  const browser = await chromium.launch({
+  const executablePath = await chromium.executablePath();
+  const browser = await playwright.chromium.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [...chromium.args, "--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath:
+      process.env.NODE_ENV === "production" ? executablePath : undefined,
   });
   // Create a context with realistic browser fingerprint
   const context = await browser.newContext({
