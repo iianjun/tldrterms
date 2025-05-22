@@ -65,3 +65,58 @@ export function Section({
     </section>
   );
 }
+
+interface TableProps {
+  columns: {
+    title: string;
+    key: string;
+    className?: string;
+  }[];
+  data: {
+    [key: string]: string | string[];
+  }[];
+  className?: string;
+}
+export function Table({ columns, data, className }: TableProps) {
+  return (
+    <table className={cn("w-full", className)}>
+      <thead>
+        <tr>
+          {columns.map((column) => (
+            <th
+              className={cn(
+                "bg-muted p-2 text-left border border-muted-foreground",
+                column.className
+              )}
+              key={column.key}
+            >
+              {column.title}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((row, index) => (
+          <tr key={index}>
+            {columns.map((column) => (
+              <td
+                className="p-2 border text-left border-muted-foreground text-muted-foreground"
+                key={column.key}
+              >
+                {Array.isArray(row[column.key]) ? (
+                  <List className="!ps-0" type="disc">
+                    {(row[column.key] as string[]).map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </List>
+                ) : (
+                  row[column.key]
+                )}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}

@@ -388,7 +388,7 @@ Second, after performing the main scoring analysis, specifically scan the entire
         * -1: Process appears cumbersome, exceptions overly broad, description lacks clear mechanism/instructions, OR implies only anonymization. **User left uncertain or facing difficulty.** Poor usability/concerning limitations. (Matches user example 10)
         * -2: No mention of right, explicitly denies it, or states indefinite retention.
     * *Criterion 5.4:* Opt-Out Mechanisms (Marketing, Non-Essential Processing)
-        * +2: Easy, granular controls, respected promptly, covers various types. Excellent control.
+        * +2: Easy, granular controls, respected promptly, covers various types. Excellent control. No marketing or non-essential processing; nothing to opt out of. Clear explanation provided.
         * +1: Clear, functional opt-out for major uses (e.g., marketing emails). Good control.
         * 0: Mentions opt-out, process unclear/effortful/limited (e.g., only cookie banner). Standard, potentially ineffective.
         * -1: Opt-out process difficult/hidden/complex OR **vagueness/lack of clear instructions/mechanisms leaves user uncertain about what can be opted out of or how.** Poor control/barrier. (Matches user example 11)
