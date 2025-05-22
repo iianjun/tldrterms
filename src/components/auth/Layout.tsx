@@ -1,6 +1,7 @@
 "use client";
 import OAuthButton from "@/components/auth/OAuthButton";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React, { Suspense } from "react";
@@ -39,11 +40,7 @@ const SOURCE_MAP = {
     title: "Reset Your Password",
     subtitle:
       "Enter in a new secure password and press save to update your password",
-    footer: {
-      link: "/login",
-      title: "Already have an account?",
-      text: "Sign In",
-    },
+    footer: null,
   },
 };
 
@@ -60,42 +57,64 @@ export default function AuthLayout({
   children: React.ReactNode;
 }>) {
   const pathname = (usePathname() || "/login") as Pathname;
+  const isInAuth = ["/login", "/signup"].includes(pathname);
   if (pathname === "/auth/auth-code-error") {
     return <Suspense>{children}</Suspense>;
   }
   return (
-    <div className="mx-auto flex w-82.5 flex-col justify-center sm:w-96">
-      <div className="mb-10">
-        <h1 className="mb-2 text-2xl lg:text-3xl">
-          {SOURCE_MAP[pathname].title}
-        </h1>
-        <h2 className="text-muted-foreground text-sm">
-          {SOURCE_MAP[pathname].subtitle}
-        </h2>
-      </div>
-      <div className="flex flex-col gap-5">
-        {!["/forgot-password", "/reset-password"].includes(pathname) && (
-          <>
-            <OAuthButton provider="google" />
-            <OAuthButton provider="github" />
-            <div className="flex items-center">
-              <Separator className="flex-1" />
-              <span className="px-2 text-muted-foreground text-sm">or</span>
-              <Separator className="flex-1" />
-            </div>
-          </>
+    <div
+      className={cn("mx-auto flex w-82.5 flex-col sm:w-96", {
+        "pb-4 md:py-8": isInAuth,
+      })}
+    >
+      <div className="flex flex-col flex-1 justify-center">
+        <div className="mb-10">
+          <h1 className="mb-2 text-2xl lg:text-3xl">
+            {SOURCE_MAP[pathname].title}
+          </h1>
+          <h2 className="text-muted-foreground text-sm">
+            {SOURCE_MAP[pathname].subtitle}
+          </h2>
+        </div>
+        <div className="flex flex-col gap-5">
+          {!["/forgot-password", "/reset-password"].includes(pathname) && (
+            <>
+              <OAuthButton provider="google" />
+              <OAuthButton provider="github" />
+              <div className="flex items-center">
+                <Separator className="flex-1" />
+                <span className="px-2 text-muted-foreground text-sm">or</span>
+                <Separator className="flex-1" />
+              </div>
+            </>
+          )}
+          {children}
+        </div>
+        {SOURCE_MAP[pathname].footer && (
+          <div className="my-8 self-center text-foreground text-sm">
+            {SOURCE_MAP[pathname].footer.title}{" "}
+            <Link
+              className="text-foreground underline transition hover:text-muted-foreground"
+              href={SOURCE_MAP[pathname].footer.link}
+            >
+              {SOURCE_MAP[pathname].footer.text}
+            </Link>
+          </div>
         )}
-        {children}
       </div>
-      <div className="my-8 self-center text-foreground text-sm">
-        {SOURCE_MAP[pathname].footer.title}{" "}
-        <Link
-          className="text-foreground underline transition hover:text-muted-foreground"
-          href={SOURCE_MAP[pathname].footer.link}
-        >
-          {SOURCE_MAP[pathname].footer.text}
-        </Link>
-      </div>
+      {["/login", "/signup"].includes(pathname) && (
+        <p className="text-xs text-center text-muted-foreground">
+          By continuing, you agree to TL;DR Terms{" "}
+          <Link className="underline" href="/terms">
+            Terms of Service
+          </Link>{" "}
+          and{" "}
+          <Link className="underline" href="/privacy">
+            Privacy Policy
+          </Link>
+          , and to receive periodic emails with updates.
+        </p>
+      )}
     </div>
   );
 }
