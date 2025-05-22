@@ -5,9 +5,42 @@ import {
   SectionHeader,
   Table,
 } from "@/components/legal";
+import { Metadata } from "next";
 import Link from "next/link";
 
 export const dynamic = "force-static";
+export const generateMetadata = (): Metadata => {
+  const description =
+    "Review the Privacy Policy for TL;DR Terms. Learn how we handle your data, protect your privacy, and comply with legal regulations.";
+  return {
+    title: "Privacy Policy",
+    description,
+    openGraph: {
+      title: "Privacy Policy",
+      description,
+      url: "https://tldrterms.app/privacy",
+    },
+    twitter: {
+      title: "Privacy Policy",
+      description,
+    },
+    alternates: {
+      canonical: "https://tldrterms.app/privacy",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+      },
+    },
+  };
+};
+
 export default function PrivacyPage() {
   return (
     <article>

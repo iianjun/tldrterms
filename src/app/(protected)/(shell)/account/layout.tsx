@@ -1,4 +1,37 @@
 import AccountTabs from "@/components/layout/account/AccountTabs";
+
+import { Metadata } from "next";
+
+export const generateMetadata = (): Metadata => {
+  const description =
+    "Manage your TL;DR Terms account. View or update your email, password, and saved analyses.";
+
+  return {
+    title: "Account Settings",
+    description,
+    openGraph: {
+      title: "Account Settings",
+      description,
+      url: "https://tldrterms.app/account",
+    },
+    twitter: {
+      title: "Account Settings",
+      description,
+    },
+    alternates: {
+      canonical: "https://tldrterms.app/account",
+    },
+    robots: {
+      index: false,
+      follow: false,
+      googleBot: {
+        index: false,
+        follow: false,
+      },
+    },
+  };
+};
+
 export default function Layout({
   children,
 }: {

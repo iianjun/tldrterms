@@ -5,9 +5,43 @@ import {
   SectionHeader,
   Table,
 } from "@/components/legal";
+import { Metadata } from "next";
 import Link from "next/link";
 
 export const dynamic = "force-static";
+
+export function generateMetadata(): Metadata {
+  const description =
+    "Read the Terms & Conditions for using TL;DR Terms. Understand your rights and responsibilities when using our AI-powered summarization tool.";
+
+  return {
+    title: "Terms of Service",
+    description,
+    openGraph: {
+      title: "Terms of Service",
+      description,
+      url: "https://tldrterms.app/terms",
+    },
+    twitter: {
+      title: "Terms of Service",
+      description,
+    },
+    alternates: {
+      canonical: "https://tldrterms.app/terms",
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-snippet": -1,
+        "max-image-preview": "large",
+        "max-video-preview": -1,
+      },
+    },
+  };
+}
 export default function TermsPage() {
   return (
     <article>

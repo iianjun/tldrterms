@@ -50,10 +50,15 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
       close();
     } else {
       const { status, analytic, room } = result;
+      if (room.title) {
+        document.title = `${room.title} - TL;DR Terms`;
+      }
       setStatus(status);
       setErrorMsg(null);
       if (status === "done") close();
-      if (analytic) setAnalytic(analytic);
+      if (analytic) {
+        setAnalytic(analytic);
+      }
       if (room) {
         queryClient.setQueryData(
           ["rooms"],
