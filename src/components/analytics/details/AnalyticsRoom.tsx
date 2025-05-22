@@ -8,6 +8,7 @@ import { ApiResponse, Pagination } from "@/types/api";
 import { SSEResponse, SSEStatus } from "@/types/openai";
 import { Analytic, AnalyticRoom } from "@/types/supabase";
 import { InfiniteData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { sortBy } from "lodash";
 import { useEffect, useState } from "react";
 
 interface Props {
@@ -63,10 +64,15 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
         queryClient.setQueryData(
           ["rooms"],
           (oldData: InfiniteData<Pagination<AnalyticRoom[]>>) => {
-            const allPages = [
-              room,
-              ...oldData.pages.flatMap((page) => page.data || []),
-            ];
+            const allPages = sortBy(
+              [
+                room,
+                ...oldData.pages
+                  .flatMap((page) => page.data || [])
+                  .filter((_room) => _room.id !== room.id),
+              ],
+              "created_at"
+            );
             const limit = oldData.pages[0].pagination.limit;
             const ret: Pagination<AnalyticRoom[]>[] = [];
             const total = allPages.length + 1;

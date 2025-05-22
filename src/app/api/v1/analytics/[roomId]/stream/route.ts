@@ -617,6 +617,7 @@ export async function GET(
           .from("analytic_rooms")
           .update({
             analytic_status: "completed",
+            created_at: new Date().toISOString(),
           })
           .eq("id", Number(roomId))
           .select("*")
