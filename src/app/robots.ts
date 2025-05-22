@@ -11,6 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         "/account",
         "/reset-password",
         "/forgot-password",
+        "/analytics",
       ],
     },
     sitemap: "https://tldrterms.app/sitemap.xml",
