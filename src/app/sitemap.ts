@@ -15,13 +15,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: "https://tldrterms.app/privacy",
       lastModified: lastmod,
     },
-    {
-      url: "https://tldrterms.app/login",
-      lastModified: lastmod,
-    },
-    {
-      url: "https://tldrterms.app/signup",
-      lastModified: lastmod,
-    },
   ];
 }
