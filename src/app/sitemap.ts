@@ -4,15 +4,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const lastmod = new Date().toISOString();
   return [
     {
-      url: "https://tldrterms.app",
+      url: "https://www.tldrterms.app",
       lastModified: lastmod,
     },
     {
-      url: "https://tldrterms.app/terms",
+      url: "https://www.tldrterms.app/terms",
       lastModified: lastmod,
     },
     {
-      url: "https://tldrterms.app/privacy",
+      url: "https://www.tldrterms.app/privacy",
       lastModified: lastmod,
     },
   ];

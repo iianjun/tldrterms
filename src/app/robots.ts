@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         "/auth",
       ],
     },
-    sitemap: "https://tldrterms.app/sitemap.xml",
+    sitemap: "https://www.tldrterms.app/sitemap.xml",
   };
 }
