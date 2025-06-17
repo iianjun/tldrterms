@@ -24,7 +24,7 @@ export async function generateMetadata({
         title: "Analytics",
       },
       alternates: {
-        canonical: "https://tldrterms.app/analytics",
+        canonical: "https://www.tldrterms.app/analytics",
       },
     };
   }
@@ -41,7 +41,7 @@ export async function generateMetadata({
       description: data.analytics?.summary || undefined,
     },
     alternates: {
-      canonical: "https://tldrterms.app/analytics",
+      canonical: "https://www.tldrterms.app/analytics",
     },
   };
 }

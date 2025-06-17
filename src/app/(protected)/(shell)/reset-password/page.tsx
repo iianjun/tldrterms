@@ -19,7 +19,7 @@ export const generateMetadata = (): Metadata => {
       description,
     },
     alternates: {
-      canonical: "https://tldrterms.app/reset-password",
+      canonical: "https://www.tldrterms.app/reset-password",
     },
     robots: {
       index: false,

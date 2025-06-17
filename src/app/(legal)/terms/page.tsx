@@ -27,7 +27,7 @@ export function generateMetadata(): Metadata {
       description,
     },
     alternates: {
-      canonical: "https://tldrterms.app/terms",
+      canonical: "https://www.tldrterms.app/terms",
     },
     robots: {
       index: true,

@@ -14,7 +14,7 @@ const inter = Inter({
 export function generateMetadata(): Metadata {
   const title = "TL;DR Terms - Understand Terms of Service Easily";
   const description =
-    "TLDRTerms is an AI-powered tool that instantly summarizes website Terms of Service into clear, human-readable sections. Built with Next.js and OpenAI, it helps users understand what they’re agreeing to—without reading pages of legal jargon.";
+    "TL;DRTerms is a web service that simplifies Terms of Service by breaking them down into clear, easy-to-understand summaries. Powered by AI, it helps you quickly grasp key points before agreeing—no legal jargon, just the facts.";
 
   return {
     metadataBase: new URL("https://tldrterms.app"),
@@ -65,7 +65,7 @@ export function generateMetadata(): Metadata {
       ],
     },
     alternates: {
-      canonical: "https://tldrterms.app",
+      canonical: "https://www.tldrterms.app",
     },
     icons: {
       icon: "/favicon.ico",

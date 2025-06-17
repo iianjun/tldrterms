@@ -18,7 +18,7 @@ export const generateMetadata = (): Metadata => {
       description,
     },
     alternates: {
-      canonical: "https://tldrterms.app/login",
+      canonical: "https://www.tldrterms.app/login",
     },
     robots: {
       index: false,
