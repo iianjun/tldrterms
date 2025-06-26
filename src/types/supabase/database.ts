@@ -213,6 +213,21 @@ export type Database = {
         };
         Relationships: [];
       };
+      keep_alive: {
+        Row: {
+          id: number;
+          random_text: string | null;
+        };
+        Insert: {
+          id?: number;
+          random_text?: string | null;
+        };
+        Update: {
+          id?: number;
+          random_text?: string | null;
+        };
+        Relationships: [];
+      };
       usage_logs: {
         Row: {
           created_at: string;
