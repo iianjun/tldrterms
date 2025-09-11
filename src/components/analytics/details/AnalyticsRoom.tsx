@@ -1,4 +1,7 @@
 "use client";
+import { InfiniteData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { sortBy } from "lodash";
+import { useEffect, useState } from "react";
 import AnalyticsResult from "@/components/analytics/details/AnalyticsResult";
 import FetchError from "@/components/analytics/details/FetchError";
 import InitialAnimation from "@/components/analytics/details/InitialAnimation";
@@ -7,9 +10,6 @@ import { getAnalyticsRoomById } from "@/services/analytics";
 import { ApiResponse, Pagination } from "@/types/api";
 import { SSEResponse, SSEStatus } from "@/types/openai";
 import { Analytic, AnalyticRoom } from "@/types/supabase";
-import { InfiniteData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { sortBy } from "lodash";
-import { useEffect, useState } from "react";
 
 interface Props {
   roomId: string;
@@ -51,7 +51,7 @@ export default function AnalyticsRoom({ roomId }: Readonly<Props>) {
       close();
     } else {
       const { status, analytic, room } = result;
-      if (room.title) {
+      if (room?.title) {
         document.title = `${room.title} - TL;DR Terms`;
       }
       setStatus(status);

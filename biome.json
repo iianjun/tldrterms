@@ -48,7 +48,6 @@
         "useConst": "error"
       },
       "suspicious": {
-        "noConsole": "error",
         "noClassAssign": "off",
         "noCommentText": "error",
         "noDuplicateClassMembers": "off",

@@ -29,8 +29,8 @@ export interface AnalysisResultRes<T> {
 
 export interface SSEResponse {
   status: SSEStatus;
-  analytic: Analytic;
-  room: AnalyticRoom;
+  analytic?: Analytic;
+  room?: AnalyticRoom;
 }
 
 export type SSEStatus = "fetching" | "analyzing" | "done" | "error";

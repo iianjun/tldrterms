@@ -34,15 +34,15 @@
     "lodash": "^4.17.21",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.487.0",
-    "next": "15.2.5",
+    "next": "15.5.3",
     "next-themes": "^0.4.6",
     "ofetch": "^1.4.1",
-    "openai": "^4.93.0",
+    "openai": "^5.20.1",
     "playwright": "^1.52.0",
     "playwright-core": "^1.52.0",
     "pluralize": "^8.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "19.1.1",
+    "react-dom": "19.1.1",
     "react-hook-form": "^7.55.0",
     "react-virtuoso": "^4.12.7",
     "sonner": "^2.0.3",
@@ -52,17 +52,17 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@eslint/eslintrc": "^3",
+    "@eslint/eslintrc": "^3.3.1",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query-devtools": "^5.74.11",
     "@types/lodash": "^4.17.16",
     "@types/node": "^20",
     "@types/pluralize": "^0.0.33",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.2.5",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "eslint": "^9.35.0",
+    "eslint-config-next": "15.5.3",
     "lefthook": "^1.11.8",
     "prettier": "^3.5.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
@@ -70,5 +70,13 @@
     "tailwindcss": "^4",
     "typescript": "^5"
   },
-  "packageManager": "pnpm@10.12.3+sha512.467df2c586056165580ad6dfb54ceaad94c5a30f80893ebdec5a44c5aa73c205ae4a5bb9d5ed6bb84ea7c249ece786642bbb49d06a307df218d03da41c317417"
+  "packageManager": "pnpm@10.12.3+sha512.467df2c586056165580ad6dfb54ceaad94c5a30f80893ebdec5a44c5aa73c205ae4a5bb9d5ed6bb84ea7c249ece786642bbb49d06a307df218d03da41c317417",
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.1.12",
+      "@types/react-dom": "19.1.9",
+      "tar-fs": "3.0.9",
+      "brace-expansion": "2.0.2"
+    }
+  }
 }

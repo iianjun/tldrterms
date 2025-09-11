@@ -2,36 +2,33 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  experimental: {
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: [
-            {
-              loader: "@svgr/webpack",
-              options: {
-                svgo: true,
-                svgoConfig: {
-                  plugins: [
-                    {
-                      name: "preset-default",
-                      params: {
-                        overrides: {
-                          removeViewBox: false,
-                        },
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: [
+          {
+            loader: "@svgr/webpack",
+            options: {
+              svgo: true,
+              svgoConfig: {
+                plugins: [
+                  {
+                    name: "preset-default",
+                    params: {
+                      overrides: {
+                        removeViewBox: false,
                       },
                     },
-                  ],
-                },
+                  },
+                ],
               },
             },
-          ],
-          as: "*.js",
-        },
+          },
+        ],
+        as: "*.js",
       },
     },
   },
-
   webpack(config) {
     const fileLoaderRule = config.module.rules.find((rule: any) =>
       rule.test?.test?.(".svg")
