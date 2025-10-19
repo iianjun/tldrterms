@@ -1,8 +1,8 @@
+import { z } from "zod";
 import { DELETION_REASONS } from "@/constants/deletion";
 import { DeletionSurveyReason } from "@/types/supabase";
-import { z } from "zod";
 
-const values: [DeletionSurveyReason, ...DeletionSurveyReason[]] = [
+const values: DeletionSurveyReason[] = [
   DELETION_REASONS[0].value,
   ...DELETION_REASONS.slice(1).map((p) => p.value),
 ];
