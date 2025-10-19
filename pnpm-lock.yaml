@@ -96,8 +96,8 @@ importers:
         specifier: ^1.4.1
         version: 1.4.1
       openai:
-        specifier: ^5.20.1
-        version: 5.20.1(ws@8.18.1)(zod@3.24.3)
+        specifier: ^6.5.0
+        version: 6.5.0(ws@8.18.1)(zod@4.1.12)
       playwright:
         specifier: ^1.52.0
         version: 1.52.0
@@ -129,8 +129,8 @@ importers:
         specifier: ^1.2.5
         version: 1.2.8
       zod:
-        specifier: ^3.24.2
-        version: 3.24.3
+        specifier: ^4.1.12
+        version: 4.1.12
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.9.4
@@ -3192,12 +3192,12 @@ packages:
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
-  openai@5.20.1:
-    resolution: {integrity: sha512-UndCB0R5V3iB9I98NyF69zNP6YfwU4+Fjk0eW4HhooTm+Awlpm/MGjJTwJsyNV/qkH1NJi0GG+9odwukGTqExQ==}
+  openai@6.5.0:
+    resolution: {integrity: sha512-bNqJ15Ijbs41KuJ2iYz/mGAruFHzQQt7zXo4EvjNLoB64aJdgn1jlMeDTsXjEg+idVYafg57QB/5Rd16oqvZ6A==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
-      zod: ^3.23.8
+      zod: ^3.25 || ^4.0
     peerDependenciesMeta:
       ws:
         optional: true
@@ -3855,8 +3855,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  zod@3.24.3:
-    resolution: {integrity: sha512-HhY1oqzWCQWuUqvBFnsyrtZRhyPeR7SUGv+C4+MsisMuVfSPx8HpwWqH8tRahSlt6M3PiFAcoeFhZAqIXTxoSg==}
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
 snapshots:
 
@@ -7095,10 +7095,10 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  openai@5.20.1(ws@8.18.1)(zod@3.24.3):
+  openai@6.5.0(ws@8.18.1)(zod@4.1.12):
     optionalDependencies:
       ws: 8.18.1
-      zod: 3.24.3
+      zod: 4.1.12
 
   optionator@0.9.4:
     dependencies:
@@ -7806,4 +7806,4 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zod@3.24.3: {}
+  zod@4.1.12: {}

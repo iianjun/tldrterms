@@ -1,3 +1,5 @@
+import { NextRequest, NextResponse } from "next/server";
+import OpenAI from "openai";
 import { CustomResponse } from "@/lib/response";
 import { getAuthentication } from "@/lib/supabase/authentication";
 import { createClient } from "@/lib/supabase/server";
@@ -8,8 +10,6 @@ import {
 } from "@/types/openai";
 import { calculateScore } from "@/utils/calculate-score";
 import { extractTextFromUrl } from "@/utils/website";
-import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -38,7 +38,7 @@ async function performValidation(text: string) {
   try {
     //Language/content detection
     const validation = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+      model: "gpt-5-mini",
       temperature: 0,
       response_format: { type: "json_object" },
       messages: [
@@ -48,7 +48,6 @@ async function performValidation(text: string) {
   You are a highly accurate document-type classifier. When given a block of website text, you must:
   1. Identify the primary language:
    • “EN” if predominantly English
-   • “KO” if predominantly Korean
    • “ETC” otherwise
   
   2. Decide the document type:
@@ -71,10 +70,10 @@ async function performValidation(text: string) {
       validation.choices[0].message.content ?? "{}"
     ) as unknown as OpenAIValidationResponse;
     const { language, document_type } = validationRaw;
-    if (!["EN", "KO"].includes(language ?? "")) {
+    if ("EN" !== (language ?? "")) {
       return {
         isSuccess: false,
-        message: "We currently only support English and Korean content.",
+        message: "We currently only support English content.",
       };
     }
     if (document_type === "unknown") {
@@ -102,9 +101,13 @@ async function getChatResponse({
   text,
   prompt,
   document_type,
-}: { text: string; prompt: string; document_type: "terms" | "privacy" }) {
+}: {
+  text: string;
+  prompt: string;
+  document_type: "terms" | "privacy";
+}) {
   const chatResponse = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+    model: "gpt-5-mini",
     messages: [
       {
         role: "system",
@@ -520,11 +523,7 @@ export async function GET(
   const encoder = new TextEncoder();
   const stream = new ReadableStream({
     async start(controller) {
-      const send = (data: {
-        success: boolean;
-        error?: string;
-        data: any;
-      }) => {
+      const send = (data: { success: boolean; error?: string; data: any }) => {
         controller.enqueue(
           encoder.encode(
             `data: ${JSON.stringify({ ...data, statusCode: data.success ? 200 : 400 })}\n\n`
