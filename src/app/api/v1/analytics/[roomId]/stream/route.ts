@@ -39,7 +39,6 @@ async function performValidation(text: string) {
     //Language/content detection
     const validation = await openai.chat.completions.create({
       model: "gpt-5-mini",
-      temperature: 0,
       response_format: { type: "json_object" },
       messages: [
         {
@@ -119,7 +118,6 @@ async function getChatResponse({
       },
     ],
     response_format: { type: "json_object" },
-    temperature: 0.3,
   });
   const content = chatResponse.choices[0].message.content;
   const data = JSON.parse(content || "{}") as OpenAIAnalayzedResponse;
